@@ -91,7 +91,7 @@ export const navigation: NavGroup[] = [
         title: "Listening Curation",
         href: "/listening",
         icon: Radar,
-        description: "Ported from the MI curation console",
+        description: "Topics, sources, ontology, review queue, golden sets, replay, metrics",
       },
       {
         title: "Platform Alerts",

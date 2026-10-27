@@ -52,6 +52,17 @@ export function formatCompactCurrency(value: number, currency: CurrencyCode = "U
   return `${sign}${symbol}${scaled}${unit.suffix}`;
 }
 
+/** "Oct 26, 2026 · 2:10 PM" — tolerant of a timestamp missing its timezone suffix. */
+export function formatDateTime(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const normalized = iso.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(iso) ? iso : `${iso}Z`;
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return "—";
+  const datePart = date.toLocaleDateString(LOCALE, { month: "short", day: "numeric", year: "numeric" });
+  const timePart = date.toLocaleTimeString(LOCALE, { hour: "numeric", minute: "2-digit" });
+  return `${datePart} · ${timePart}`;
+}
+
 export function getInitials(name: string): string {
   return name
     .split(/[\s@._-]+/)
