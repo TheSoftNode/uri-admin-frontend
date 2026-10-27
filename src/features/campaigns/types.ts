@@ -1,5 +1,3 @@
-import type { Kpi } from "@/types/tone";
-
 export type JaneDecision = "PLAN" | "ADVISE";
 
 export interface CampaignPlan {
@@ -11,9 +9,18 @@ export interface CampaignPlan {
   accountCapNgn: number;
   launched: boolean;
   updated: string;
+  /** Admin safety flag — distinct from the plan's own PLAN/ADVISE decision. */
+  flaggedForReview: boolean;
+}
+
+export interface CampaignsStats {
+  totalFundedNgn: number;
+  spendThisMonthNgn: number;
+  accountCapBreaches: number;
+  plansAwaitingDecision: number;
 }
 
 export interface CampaignsPageData {
-  kpis: Kpi[];
+  stats: CampaignsStats;
   plans: CampaignPlan[];
 }

@@ -1,12 +1,12 @@
 import type { CampaignsPageData } from "@/features/campaigns/types";
 
 export const campaignsFixture: CampaignsPageData = {
-  kpis: [
-    { id: "funded", label: "Total funded", value: "₦48.2M" },
-    { id: "spend", label: "Spend this month", value: "₦19.6M", tone: "brand" },
-    { id: "breaches", label: "Account-cap breaches", value: "2", tone: "critical" },
-    { id: "awaiting", label: "Plans awaiting decision", value: "34", tone: "warning" },
-  ],
+  stats: {
+    totalFundedNgn: 48_200_000,
+    spendThisMonthNgn: 19_600_000,
+    accountCapBreaches: 2,
+    plansAwaitingDecision: 34,
+  },
   plans: [
     {
       id: "cp_01",
@@ -17,6 +17,7 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 3_000_000,
       launched: true,
       updated: "12m ago",
+      flaggedForReview: false,
     },
     {
       id: "cp_02",
@@ -27,6 +28,7 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 1_200_000,
       launched: false,
       updated: "1h ago",
+      flaggedForReview: false,
     },
     {
       id: "cp_03",
@@ -37,6 +39,7 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 5_000_000,
       launched: true,
       updated: "38m ago",
+      flaggedForReview: false,
     },
     {
       id: "cp_04",
@@ -47,6 +50,7 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 1_400_000,
       launched: true,
       updated: "3m ago",
+      flaggedForReview: false,
     },
     {
       id: "cp_05",
@@ -57,6 +61,7 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 900_000,
       launched: false,
       updated: "2h ago",
+      flaggedForReview: false,
     },
     {
       id: "cp_06",
@@ -67,6 +72,7 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 4_000_000,
       launched: true,
       updated: "55m ago",
+      flaggedForReview: false,
     },
     {
       id: "cp_07",
@@ -77,6 +83,18 @@ export const campaignsFixture: CampaignsPageData = {
       accountCapNgn: 700_000,
       launched: false,
       updated: "4h ago",
+      flaggedForReview: false,
+    },
+    {
+      id: "cp_08",
+      business: "Blueprint Digital",
+      decision: "PLAN",
+      budgetNgn: 6_000_000,
+      spendNgn: 6_240_000,
+      accountCapNgn: 6_000_000,
+      launched: true,
+      updated: "20m ago",
+      flaggedForReview: false,
     },
   ],
 };
