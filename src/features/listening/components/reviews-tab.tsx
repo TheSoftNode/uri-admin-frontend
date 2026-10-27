@@ -78,7 +78,12 @@ function ReviewRow({
           <div className="space-y-2.5 rounded-lg border border-border bg-muted/20 p-3">
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-1.5 text-[12px] text-foreground">
-                <input type="radio" checked={onTopic === true} onChange={() => setOnTopic(true)} />{" "}
+                <input
+                  type="radio"
+                  checked={onTopic === true}
+                  onChange={() => setOnTopic(true)}
+                  className="accent-brand"
+                />{" "}
                 On-topic
               </label>
               <label className="flex items-center gap-1.5 text-[12px] text-foreground">
@@ -86,6 +91,7 @@ function ReviewRow({
                   type="radio"
                   checked={onTopic === false}
                   onChange={() => setOnTopic(false)}
+                  className="accent-brand"
                 />{" "}
                 Off-topic
               </label>

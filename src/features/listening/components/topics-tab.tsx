@@ -50,7 +50,7 @@ const SelectEl = ({
     value={value}
     onChange={(e) => onChange(e.target.value)}
     className={cn(
-      "h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground",
+      "h-8 rounded-lg border border-input bg-card px-2 text-[12px] text-foreground transition-[border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20",
       className,
     )}
   >
