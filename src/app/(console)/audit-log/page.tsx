@@ -8,6 +8,10 @@ import { AuditTimeline } from "@/features/audit-log/components/audit-timeline";
 
 export const metadata: Metadata = { title: "Audit Log" };
 
+/** cacheLife("seconds") keeps this near real-time, below the instant-prefetch
+ * window — intentional; see node_modules/next/dist/docs/.../instant-navigation.md. */
+export const instant = false;
+
 export default async function AuditLogPage() {
   const { entries } = await getAuditLog();
 

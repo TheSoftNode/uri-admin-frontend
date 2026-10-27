@@ -4,7 +4,12 @@ export type AuditRange = "7d" | "30d" | "90d";
 
 const RANGE_DAYS: Record<AuditRange, number> = { "7d": 7, "30d": 30, "90d": 90 };
 
-export function withinRange(entry: AuditEntry, range: AuditRange, now = new Date()): boolean {
+/**
+ * `now` is required, not defaulted to `new Date()` — a default evaluated
+ * during server rendering is a non-deterministic value Cache Components
+ * flags as unstable during prerendering. Callers compute it once themselves.
+ */
+export function withinRange(entry: AuditEntry, range: AuditRange, now: Date): boolean {
   const cutoff = now.getTime() - RANGE_DAYS[range] * 24 * 60 * 60 * 1000;
   return new Date(entry.whenIso).getTime() >= cutoff;
 }

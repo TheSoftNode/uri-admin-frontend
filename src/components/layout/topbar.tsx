@@ -16,7 +16,7 @@ export function Topbar() {
       <div className="flex shrink-0 items-center gap-2.5">
         <GlobalSearch />
         <ThemeToggle />
-        <NotificationsButton unread={4} />
+        <NotificationsButton />
         <UserMenu />
       </div>
     </header>

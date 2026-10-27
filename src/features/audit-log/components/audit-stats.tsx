@@ -1,3 +1,5 @@
+"use client";
+
 import { CreditCard, ScrollText, ShieldCheck, Users } from "lucide-react";
 
 import { AnimatedNumber } from "@/components/motion/animated-number";
@@ -7,7 +9,8 @@ import { withinRange } from "@/features/audit-log/lib";
 import type { AuditEntry } from "@/features/audit-log/types";
 
 export function AuditStatsPanel({ entries }: { entries: AuditEntry[] }) {
-  const last7d = entries.filter((e) => withinRange(e, "7d"));
+  const now = new Date();
+  const last7d = entries.filter((e) => withinRange(e, "7d", now));
   const activeAdmins = new Set(entries.filter((e) => e.actor !== "System").map((e) => e.actor))
     .size;
   const creditAdjustments = last7d.filter((e) => e.category === "credit").length;

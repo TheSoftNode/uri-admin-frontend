@@ -50,13 +50,13 @@ export function AuditTimeline({ entries }: { entries: AuditEntry[] }) {
   const [category, setCategory] = useState<AuditCategory | "all">("all");
   const [range, setRange] = useState<AuditRange>("7d");
 
-  const visible = useMemo(
-    () =>
-      entries.filter(
-        (entry) => (category === "all" || entry.category === category) && withinRange(entry, range),
-      ),
-    [entries, category, range],
-  );
+  const visible = useMemo(() => {
+    const now = new Date();
+    return entries.filter(
+      (entry) =>
+        (category === "all" || entry.category === category) && withinRange(entry, range, now),
+    );
+  }, [entries, category, range]);
 
   return (
     <div className="flex flex-col gap-4">

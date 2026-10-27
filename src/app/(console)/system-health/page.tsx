@@ -8,6 +8,10 @@ import { criticalCount } from "@/features/system-health/lib";
 
 export const metadata: Metadata = { title: "System Health" };
 
+/** cacheLife("seconds") keeps this near real-time, below the instant-prefetch
+ * window — intentional; see node_modules/next/dist/docs/.../instant-navigation.md. */
+export const instant = false;
+
 export default async function SystemHealthPage() {
   const { stats, requestVolume, services } = await getSystemHealth();
 
