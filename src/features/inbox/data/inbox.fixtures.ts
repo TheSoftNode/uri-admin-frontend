@@ -1,0 +1,78 @@
+import type { InboxPageData } from "@/features/inbox/types";
+
+export const inboxFixture: InboxPageData = {
+  kpis: [
+    { id: "enabled", label: "Businesses with inbox enabled", value: "3,104" },
+    { id: "expiring", label: "Meta tokens expiring (7d)", value: "42", tone: "warning" },
+    {
+      id: "guard",
+      label: "Guard interventions today",
+      value: "216",
+      hint: "jailbreak / URL strips",
+      tone: "brand",
+    },
+    {
+      id: "module",
+      label: "Module status",
+      value: "Enabled",
+      hint: "INBOX_TOKEN_ENC_KEYS set",
+      tone: "success",
+    },
+  ],
+  connections: [
+    {
+      id: "ib_01",
+      business: "Naija Glow Cosmetics",
+      channels: ["instagram", "whatsapp"],
+      token: { state: "healthy" },
+      autoReply: true,
+      guardInterventions: 2,
+      lastActivity: "4m ago",
+    },
+    {
+      id: "ib_02",
+      business: "Lagos Wigs Co.",
+      channels: ["instagram", "messenger", "whatsapp"],
+      token: { state: "expiring", inDays: 3 },
+      autoReply: true,
+      guardInterventions: 0,
+      lastActivity: "21m ago",
+    },
+    {
+      id: "ib_03",
+      business: "Zenith Logistics",
+      channels: ["messenger"],
+      token: { state: "healthy" },
+      autoReply: false,
+      guardInterventions: 1,
+      lastActivity: "2h ago",
+    },
+    {
+      id: "ib_04",
+      business: "Volta Energy Drinks",
+      channels: ["instagram", "whatsapp"],
+      token: { state: "invalid" },
+      autoReply: false,
+      guardInterventions: 0,
+      lastActivity: "2d ago",
+    },
+    {
+      id: "ib_05",
+      business: "Hustle Media NG",
+      channels: ["whatsapp"],
+      token: { state: "healthy" },
+      autoReply: true,
+      guardInterventions: 5,
+      lastActivity: "8m ago",
+    },
+    {
+      id: "ib_06",
+      business: "Afrobeats PR Group",
+      channels: ["instagram", "messenger"],
+      token: { state: "healthy" },
+      autoReply: true,
+      guardInterventions: 0,
+      lastActivity: "55m ago",
+    },
+  ],
+};
