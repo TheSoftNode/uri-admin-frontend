@@ -1,5 +1,4 @@
 import type { TokenState } from "@/types/integrations";
-import type { Kpi } from "@/types/tone";
 
 export type InboxChannel = "instagram" | "whatsapp" | "messenger";
 
@@ -14,7 +13,14 @@ export interface InboxConnection {
   lastActivity: string;
 }
 
+export interface InboxStats {
+  businessesEnabled: number;
+  metaTokensExpiring7d: number;
+  guardInterventionsToday: number;
+  moduleEnabled: boolean;
+}
+
 export interface InboxPageData {
-  kpis: Kpi[];
+  stats: InboxStats;
   connections: InboxConnection[];
 }

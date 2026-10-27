@@ -1,24 +1,12 @@
 import type { InboxPageData } from "@/features/inbox/types";
 
 export const inboxFixture: InboxPageData = {
-  kpis: [
-    { id: "enabled", label: "Businesses with inbox enabled", value: "3,104" },
-    { id: "expiring", label: "Meta tokens expiring (7d)", value: "42", tone: "warning" },
-    {
-      id: "guard",
-      label: "Guard interventions today",
-      value: "216",
-      hint: "jailbreak / URL strips",
-      tone: "brand",
-    },
-    {
-      id: "module",
-      label: "Module status",
-      value: "Enabled",
-      hint: "INBOX_TOKEN_ENC_KEYS set",
-      tone: "success",
-    },
-  ],
+  stats: {
+    businessesEnabled: 3104,
+    metaTokensExpiring7d: 42,
+    guardInterventionsToday: 216,
+    moduleEnabled: true,
+  },
   connections: [
     {
       id: "ib_01",
