@@ -4,7 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import type { BillingPageData } from "@/features/billing/types";
 import { formatCurrency } from "@/lib/format";
 
-export function RevenueCard({ revenue }: { revenue: BillingPageData["revenue"] }) {
+export function RevenueCard({
+  revenue,
+  className,
+}: {
+  revenue: BillingPageData["revenue"];
+  className?: string;
+}) {
   const latest = revenue[revenue.length - 1];
   const series = revenue.map((r) => ({
     label: r.month,
@@ -14,6 +20,7 @@ export function RevenueCard({ revenue }: { revenue: BillingPageData["revenue"] }
 
   return (
     <SectionCard
+      className={className}
       title="Revenue — last 6 months"
       action={
         <Badge variant="neutral" className="font-mono">

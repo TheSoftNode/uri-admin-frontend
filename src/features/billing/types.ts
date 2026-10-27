@@ -1,4 +1,5 @@
-import type { Kpi, Tone } from "@/types/tone";
+import type { PlanTier } from "@/lib/plans";
+import type { Tone } from "@/types/tone";
 
 export interface FunnelStage {
   name: string;
@@ -10,17 +11,29 @@ export interface FunnelStage {
 
 export interface Wallet {
   id: string;
+  /** Links back to the same AdminUser this wallet belongs to. */
+  userId: string;
   email: string;
-  tier: "Starter" | "Growth" | "Pro" | "Agency";
-  source: "stripe" | "trial";
+  /** null = no active subscription (free). */
+  tier: PlanTier | null;
+  source: "stripe" | "trial" | "access_code";
   creditsRemaining: number;
   trialActive: boolean;
   /** Renewal date label, or null when the last payment failed. */
   renewal: string | null;
 }
 
+export interface BillingStats {
+  mrrUsd: number;
+  mrrChangePct: number;
+  activeSubscriptions: number;
+  trialConversionPct: number;
+  failedPayments7d: number;
+  failedPaymentsAtRiskUsd: number;
+}
+
 export interface BillingPageData {
-  kpis: Kpi[];
+  stats: BillingStats;
   revenue: { month: string; mrrUsd: number }[];
   funnel: FunnelStage[];
   wallets: Wallet[];

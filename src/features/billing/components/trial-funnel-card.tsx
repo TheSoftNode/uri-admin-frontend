@@ -3,9 +3,15 @@ import { SectionCard } from "@/components/data-display/section-card";
 import type { FunnelStage } from "@/features/billing/types";
 import { formatNumber } from "@/lib/format";
 
-export function TrialFunnelCard({ funnel }: { funnel: FunnelStage[] }) {
+export function TrialFunnelCard({
+  funnel,
+  className,
+}: {
+  funnel: FunnelStage[];
+  className?: string;
+}) {
   return (
-    <SectionCard title="Trial funnel" description="30-day cohort">
+    <SectionCard className={className} title="Trial funnel" description="30-day cohort">
       <ol className="flex flex-col gap-5">
         {funnel.map((stage) => (
           <li key={stage.name} className="flex flex-col gap-2">

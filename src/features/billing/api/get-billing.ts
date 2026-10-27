@@ -11,6 +11,7 @@ export async function getBilling(): Promise<BillingPageData> {
   cacheLife("minutes");
   cacheTag(cacheTags.billing);
 
-  // TODO(api): replace with `GET /admin/billing/summary` and `GET /admin/wallets?attention=true`.
+  // TODO(api): replace with `GET /api/admin/stats` (mrr/subscriptions) and a
+  // wallet-attention listing built on `CreditService`/`UserCreditWallet`.
   return billingFixture;
 }
