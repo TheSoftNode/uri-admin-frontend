@@ -49,7 +49,7 @@ function ReviewRow({
     <Card className="overflow-hidden py-0">
       <CardContent className="space-y-2.5 p-4">
         <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="brand" className="text-[10px]">
             {r.market}
           </Badge>
           <span>confidence {r.confidence != null ? Math.round(r.confidence * 100) : "—"}%</span>
@@ -113,7 +113,7 @@ function ReviewRow({
                 <CheckCircle2 className="h-3 w-3" />
                 Save correction
               </Button>
-              <Button size="xs" variant="outline" disabled={busy} onClick={markGolden}>
+              <Button size="xs" variant="soft" disabled={busy} onClick={markGolden}>
                 <Star className="h-3 w-3" /> Mark golden
               </Button>
             </div>

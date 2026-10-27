@@ -46,7 +46,7 @@ export function SourcesTab({ sources, onToggle }: SourcesTabProps) {
     <Stagger className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {sources.map((s) => (
         <StaggerItem key={s.source}>
-          <Card>
+          <Card className="h-full">
             <CardContent className="space-y-3 p-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">

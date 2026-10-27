@@ -196,7 +196,7 @@ export function TopicsTab({ markets, topics, topicHistory, market, onDecide }: T
                             {t.status !== "monitored" && (
                               <Button
                                 size="xs"
-                                variant="outline"
+                                variant="soft"
                                 disabled={busy}
                                 onClick={() => decide(t, "monitored")}
                               >
@@ -274,7 +274,7 @@ export function TopicsTab({ markets, topics, topicHistory, market, onDecide }: T
                       {t.status !== "monitored" && (
                         <Button
                           size="xs"
-                          variant="outline"
+                          variant="soft"
                           disabled={busy}
                           onClick={() => decide(t, "monitored")}
                         >

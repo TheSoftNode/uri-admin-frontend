@@ -42,7 +42,7 @@ function OntologyCategoryCard({
   };
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardContent className="space-y-3 p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="text-[14px] font-semibold text-foreground">{category.label}</div>
@@ -56,7 +56,7 @@ function OntologyCategoryCard({
             {category.coreTerms.map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] text-foreground"
+                className="inline-flex items-center gap-1 rounded-full border border-transparent bg-brand-soft px-2 py-0.5 text-[11px] text-brand"
               >
                 {t}
                 <button
@@ -83,7 +83,7 @@ function OntologyCategoryCard({
               {terms.map((t) => (
                 <span
                   key={t}
-                  className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] text-foreground"
+                  className="inline-flex items-center gap-1 rounded-full border border-transparent bg-brand-soft px-2 py-0.5 text-[11px] text-brand"
                 >
                   {t}
                   <button
@@ -112,7 +112,7 @@ function OntologyCategoryCard({
             onChange={(e) => setNewLang(e.target.value)}
             className="h-8 w-28 text-[12px]"
           />
-          <Button size="sm" variant="outline" disabled={busy || !newTerm.trim()} onClick={add}>
+          <Button size="sm" variant="soft" disabled={busy || !newTerm.trim()} onClick={add}>
             <Plus className="h-3.5 w-3.5" />
             Add
           </Button>

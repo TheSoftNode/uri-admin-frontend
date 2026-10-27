@@ -45,7 +45,7 @@ export function GoldenTab({ items, onRemove }: GoldenTabProps) {
             <CardContent className="flex items-start justify-between gap-3 p-4">
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                  <Badge variant="outline" className="text-[10px]">
+                  <Badge variant="brand" className="text-[10px]">
                     {g.market}
                   </Badge>
                   <span>{g.intent || "no intent"}</span>
