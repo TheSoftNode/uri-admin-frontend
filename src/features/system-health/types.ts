@@ -1,5 +1,3 @@
-import type { Kpi } from "@/types/tone";
-
 export type ServiceStatus = "healthy" | "degraded" | "down";
 
 export interface ServiceHealth {
@@ -10,10 +8,18 @@ export interface ServiceHealth {
   severity?: "warning" | "critical";
   metric: string;
   lastIncident: string;
+  /** The matching Platform Alert's `kind`, when this degradation has one. */
+  alertKind?: string;
+}
+
+export interface SystemHealthStats {
+  apiP95LatencyMs: number;
+  backgroundJobsQueued: number;
+  apifySpendUsdMonth: number;
 }
 
 export interface SystemHealthPageData {
-  kpis: Kpi[];
+  stats: SystemHealthStats;
   requestVolume: { hour: string; requests: number }[];
   services: ServiceHealth[];
 }

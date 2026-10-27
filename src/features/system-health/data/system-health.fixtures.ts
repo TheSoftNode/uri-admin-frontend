@@ -6,18 +6,11 @@ const hourlyRequests = [
 ];
 
 export const systemHealthFixture: SystemHealthPageData = {
-  kpis: [
-    { id: "latency", label: "API p95 latency", value: "184ms", tone: "success" },
-    { id: "jobs", label: "Background jobs queued", value: "12" },
-    { id: "apify", label: "Apify spend (month)", value: "$2,118" },
-    {
-      id: "openai",
-      label: "OpenAI",
-      value: "Degraded",
-      hint: "9 failures in 14m",
-      tone: "critical",
-    },
-  ],
+  stats: {
+    apiP95LatencyMs: 184,
+    backgroundJobsQueued: 12,
+    apifySpendUsdMonth: 2118,
+  },
   requestVolume: hourlyRequests.map((requests, hour) => ({
     hour: `${String(hour).padStart(2, "0")}:00`,
     requests,
@@ -51,6 +44,7 @@ export const systemHealthFixture: SystemHealthPageData = {
       severity: "critical",
       metric: "9 failures / 14m",
       lastIncident: "14m ago",
+      alertKind: "openai_out_of_credit",
     },
     {
       id: "svc_linkedin",
@@ -66,6 +60,7 @@ export const systemHealthFixture: SystemHealthPageData = {
       severity: "warning",
       metric: "4.1% token refresh errors",
       lastIncident: "3h ago",
+      alertKind: "meta_token_refresh_failing",
     },
     {
       id: "svc_tiktok",
