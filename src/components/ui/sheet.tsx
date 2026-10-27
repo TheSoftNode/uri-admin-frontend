@@ -2,12 +2,20 @@
 
 import * as React from "react";
 import { Dialog as SheetPrimitive } from "radix-ui";
+import { AnimatePresence, motion } from "framer-motion";
 import { XIcon } from "lucide-react";
 
+import { duration, ease } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
+const SheetOpenContext = React.createContext(false);
+
+function Sheet({ open, ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
+  return (
+    <SheetOpenContext.Provider value={Boolean(open)}>
+      <SheetPrimitive.Root data-slot="sheet" open={open} {...props} />
+    </SheetOpenContext.Provider>
+  );
 }
 
 function SheetTrigger({ ...props }: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
@@ -27,16 +35,25 @@ function SheetOverlay({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Overlay>) {
   return (
-    <SheetPrimitive.Overlay
-      data-slot="sheet-overlay"
-      className={cn(
-        "fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
-        className,
-      )}
-      {...props}
-    />
+    <SheetPrimitive.Overlay asChild forceMount {...props}>
+      <motion.div
+        data-slot="sheet-overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: duration.base, ease: ease.out }}
+        className={cn("fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px]", className)}
+      />
+    </SheetPrimitive.Overlay>
   );
 }
+
+const offscreen: Record<"top" | "right" | "bottom" | "left", { x?: string; y?: string }> = {
+  right: { x: "100%" },
+  left: { x: "-100%" },
+  top: { y: "-100%" },
+  bottom: { y: "100%" },
+};
 
 function SheetContent({
   className,
@@ -48,34 +65,41 @@ function SheetContent({
   side?: "top" | "right" | "bottom" | "left";
   showClose?: boolean;
 }) {
+  const open = React.useContext(SheetOpenContext);
+
   return (
-    <SheetPortal>
-      <SheetOverlay />
-      <SheetPrimitive.Content
-        data-slot="sheet-content"
-        className={cn(
-          "fixed z-50 flex flex-col gap-4 bg-background shadow-float transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500",
-          side === "right" &&
-            "inset-y-0 right-0 h-full w-3/4 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
-          side === "left" &&
-            "inset-y-0 left-0 h-full w-3/4 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
-          side === "top" &&
-            "inset-x-0 top-0 h-auto data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
-          side === "bottom" &&
-            "inset-x-0 bottom-0 h-auto data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        {showClose ? (
-          <SheetPrimitive.Close className="absolute top-4 right-4 rounded-lg p-1 opacity-70 transition-opacity hover:opacity-100 focus:ring-[3px] focus:ring-ring/30 focus:outline-hidden disabled:pointer-events-none">
-            <XIcon className="size-4" />
-            <span className="sr-only">Close</span>
-          </SheetPrimitive.Close>
-        ) : null}
-      </SheetPrimitive.Content>
-    </SheetPortal>
+    <AnimatePresence>
+      {open ? (
+        <SheetPortal forceMount>
+          <SheetOverlay />
+          <SheetPrimitive.Content asChild forceMount {...props}>
+            <motion.div
+              data-slot="sheet-content"
+              initial={offscreen[side]}
+              animate={{ x: 0, y: 0 }}
+              exit={offscreen[side]}
+              transition={{ duration: duration.base, ease: ease.out }}
+              className={cn(
+                "fixed z-50 flex flex-col gap-4 bg-background shadow-float",
+                side === "right" && "inset-y-0 right-0 h-full w-3/4 sm:max-w-sm",
+                side === "left" && "inset-y-0 left-0 h-full w-3/4 sm:max-w-sm",
+                side === "top" && "inset-x-0 top-0 h-auto",
+                side === "bottom" && "inset-x-0 bottom-0 h-auto",
+                className,
+              )}
+            >
+              {children}
+              {showClose ? (
+                <SheetPrimitive.Close className="absolute top-4 right-4 rounded-lg p-1 opacity-70 transition-opacity hover:opacity-100 focus:ring-[3px] focus:ring-ring/30 focus:outline-hidden disabled:pointer-events-none">
+                  <XIcon className="size-4" />
+                  <span className="sr-only">Close</span>
+                </SheetPrimitive.Close>
+              ) : null}
+            </motion.div>
+          </SheetPrimitive.Content>
+        </SheetPortal>
+      ) : null}
+    </AnimatePresence>
   );
 }
 
