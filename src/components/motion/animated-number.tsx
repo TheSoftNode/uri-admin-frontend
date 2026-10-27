@@ -3,32 +3,17 @@
 import { animate, useInView, useMotionValue, useTransform, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
+import { formatCompactCurrency, formatCurrency, formatNumber } from "@/lib/format";
 import { duration, ease } from "@/lib/motion";
 
 type NumberFormat = "integer" | "decimal" | "usd" | "ngn" | "ngn-compact";
 
 const formatters: Record<NumberFormat, (n: number) => string> = {
-  integer: (n) => Math.round(n).toLocaleString("en-NG"),
+  integer: (n) => formatNumber(Math.round(n)),
   decimal: (n) => n.toFixed(2),
-  usd: (n) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(n),
-  ngn: (n) =>
-    new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      maximumFractionDigits: 0,
-    }).format(n),
-  "ngn-compact": (n) =>
-    new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      notation: "compact",
-      maximumFractionDigits: 1,
-    }).format(n),
+  usd: (n) => formatCurrency(n, "USD"),
+  ngn: (n) => formatCurrency(n, "NGN"),
+  "ngn-compact": (n) => formatCompactCurrency(n, "NGN"),
 };
 
 interface AnimatedNumberProps {
