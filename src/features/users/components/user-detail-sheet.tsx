@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { AdminBadge, SubscriptionBadge, TrialBadge } from "@/features/users/components/user-status";
-import { PLAN_TIERS, displayName, planTierLabel } from "@/features/users/lib";
+import { displayName } from "@/features/users/lib";
 import type { AdminUserDetails } from "@/features/users/types";
 import { formatDateTime, formatNumber, getInitials } from "@/lib/format";
+import { PLAN_TIERS, planTierLabel } from "@/lib/plans";
 
 interface UserDetailSheetProps {
   user: AdminUserDetails | null;

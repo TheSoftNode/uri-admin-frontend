@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/select";
 import { createUsersColumns } from "@/features/users/components/users-columns";
 import { UserDetailSheet } from "@/features/users/components/user-detail-sheet";
-import { PLAN_TIERS, planTierLabel } from "@/features/users/lib";
 import type { AdminUserDetails } from "@/features/users/types";
+import { PLAN_TIERS, planTierLabel } from "@/lib/plans";
 
 export function UsersTable({ users: initialUsers }: { users: AdminUserDetails[] }) {
   const [users, setUsers] = useState(initialUsers);

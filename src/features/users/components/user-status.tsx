@@ -1,8 +1,9 @@
 import { ShieldCheck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { lifecycleStatus, planTierLabel, trialDaysRemaining } from "@/features/users/lib";
+import { lifecycleStatus, trialDaysRemaining } from "@/features/users/lib";
 import type { AdminUser } from "@/features/users/types";
+import { planTierLabel } from "@/lib/plans";
 
 export function SubscriptionBadge({ user }: { user: AdminUser }) {
   if (!user.subscriptionTier) return <Badge variant="neutral">Free</Badge>;

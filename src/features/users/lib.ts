@@ -1,14 +1,5 @@
 import type { AdminUser, UserLifecycleStatus } from "@/features/users/types";
 
-/** Real plan_tier_id values the backend accepts for setUserSubscription. */
-export const PLAN_TIERS = ["starter", "growth", "pro", "agency"] as const;
-export type PlanTier = (typeof PLAN_TIERS)[number];
-
-export function planTierLabel(tier: string | undefined): string {
-  if (!tier) return "Free";
-  return tier.charAt(0).toUpperCase() + tier.slice(1);
-}
-
 function isTrialActive(user: AdminUser, now: Date): boolean {
   return Boolean(user.trialEnd) && new Date(user.trialEnd!).getTime() > now.getTime();
 }

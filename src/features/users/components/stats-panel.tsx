@@ -5,9 +5,9 @@ import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Card } from "@/components/ui/card";
 import { Meter } from "@/components/data-display/meter";
 import { StatCard } from "@/components/data-display/stat-card";
-import { planTierLabel } from "@/features/users/lib";
 import type { AdminStats } from "@/features/users/types";
 import { formatNumber } from "@/lib/format";
+import { planTierLabel } from "@/lib/plans";
 import type { Tone } from "@/types/tone";
 
 const tierTone: Record<string, Tone> = {
