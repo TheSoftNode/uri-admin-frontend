@@ -1,12 +1,12 @@
 import type { AdPlatformsPageData } from "@/features/ad-platforms/types";
 
 export const adPlatformsFixture: AdPlatformsPageData = {
-  kpis: [
-    { id: "connected", label: "Total connected accounts", value: "4,920" },
-    { id: "expiring", label: "Tokens expiring (7d)", value: "76", tone: "warning" },
-    { id: "disconnected", label: "Disconnected", value: "31", tone: "critical" },
-    { id: "elevated", label: "Elevated error rate", value: "1 platform", tone: "warning" },
-  ],
+  stats: {
+    totalConnectedAccounts: 4920,
+    tokensExpiring7d: 76,
+    disconnectedCount: 31,
+    platformsWithElevatedErrors: 1,
+  },
   connections: [
     {
       id: "ac_01",

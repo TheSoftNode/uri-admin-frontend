@@ -1,5 +1,4 @@
 import type { TokenState } from "@/types/integrations";
-import type { Kpi } from "@/types/tone";
 
 export interface AdConnection {
   id: string;
@@ -12,7 +11,14 @@ export interface AdConnection {
   errorRate: number;
 }
 
+export interface AdPlatformsStats {
+  totalConnectedAccounts: number;
+  tokensExpiring7d: number;
+  disconnectedCount: number;
+  platformsWithElevatedErrors: number;
+}
+
 export interface AdPlatformsPageData {
-  kpis: Kpi[];
+  stats: AdPlatformsStats;
   connections: AdConnection[];
 }
