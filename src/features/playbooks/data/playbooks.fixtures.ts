@@ -20,6 +20,15 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["instagram", "tiktok"],
       complianceFlagged: false,
       updated: "2d ago",
+      contentPillars: [
+        "Before/after transformations",
+        "Ingredient education",
+        "User-generated reviews",
+      ],
+      brandVoice: "Warm, confident, big-sister energy — never clinical.",
+      guardrails:
+        "Never claim to treat or cure skin conditions. No before/after without written consent.",
+      complianceNotes: null,
     },
     {
       id: "pb_02",
@@ -29,6 +38,10 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["tiktok", "linkedin"],
       complianceFlagged: false,
       updated: "5d ago",
+      contentPillars: ["Styling tutorials", "New drop announcements"],
+      brandVoice: "Playful, fast-paced, trend-literate.",
+      guardrails: "No competitor brand names in captions.",
+      complianceNotes: null,
     },
     {
       id: "pb_03",
@@ -38,6 +51,11 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["linkedin"],
       complianceFlagged: true,
       updated: "1d ago",
+      contentPillars: ["Fleet milestones", "Client case studies", "Safety culture"],
+      brandVoice: "Measured, data-forward, enterprise-credible.",
+      guardrails: "No delivery-time guarantees in copy — contractual SLAs only.",
+      complianceNotes:
+        'Legal flagged "same-day everywhere" language used in a draft on Oct 24 — not a guaranteed capability outside Lagos/Abuja.',
     },
     {
       id: "pb_04",
@@ -47,6 +65,11 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["instagram", "facebook"],
       complianceFlagged: false,
       updated: "9h ago",
+      contentPillars: ["Athlete partnerships", "Flavor launches", "Event activations"],
+      brandVoice: "High-energy, bold, youth-coded.",
+      guardrails:
+        'No health/performance claims beyond "contains caffeine." No targeting under-18 audiences.',
+      complianceNotes: null,
     },
     {
       id: "pb_05",
@@ -56,6 +79,10 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["tiktok", "instagram"],
       complianceFlagged: false,
       updated: "3d ago",
+      contentPillars: ["Creator spotlights", "Behind-the-scenes"],
+      brandVoice: "Scrappy, authentic, unpolished on purpose.",
+      guardrails: "No reposting without creator credit.",
+      complianceNotes: null,
     },
     {
       id: "pb_06",
@@ -65,6 +92,11 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["instagram"],
       complianceFlagged: true,
       updated: "6h ago",
+      contentPillars: ["Artist announcements", "Press roundups"],
+      brandVoice: "Glossy, insider-access tone.",
+      guardrails: "Nothing published before the client's own announcement goes live.",
+      complianceNotes:
+        "Flagged for an early-leak risk — draft referenced an unannounced release date.",
     },
     {
       id: "pb_07",
@@ -74,6 +106,10 @@ export const playbooksFixture: PlaybooksPageData = {
       targetPlatforms: ["instagram", "tiktok"],
       complianceFlagged: false,
       updated: "4d ago",
+      contentPillars: ["Class previews", "Member transformations", "Trainer tips"],
+      brandVoice: "Encouraging, no-judgment, community-first.",
+      guardrails: "No before/after body photos without signed release.",
+      complianceNotes: null,
     },
   ],
 };
