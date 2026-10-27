@@ -1,19 +1,29 @@
-import type { Kpi } from "@/types/tone";
-
-export type AlertSeverity = "critical" | "warning" | "info";
-export type AlertStatus = "open" | "acknowledged" | "monitoring";
-
+/** Mirrors AdminService.ts's PlatformAlert exactly (camelCase in place of
+ * the real snake_case wire fields). Infrastructure/account-level failures
+ * (e.g. a shared OpenAI key running out of credit) — not business-reported
+ * issues. There is no severity or affected-platform field on the real
+ * model; `kind` is the stable identifier dismiss acts on. */
 export interface PlatformAlert {
-  id: string;
+  kind: string;
   title: string;
-  severity: AlertSeverity;
-  platform: string;
-  businessesImpacted: number;
+  detail: string;
   firstSeen: string;
-  status: AlertStatus;
+  lastSeen: string;
+  occurrences: number;
+  lastEmailedAt: string | null;
+  dismissedAt: string | null;
+}
+
+export interface AlertsStats {
+  activeCount: number;
+  totalOccurrencesActive: number;
+  dismissedLast7d: number;
+  emailedCount: number;
 }
 
 export interface AlertsPageData {
-  kpis: Kpi[];
+  stats: AlertsStats;
+  /** Active and dismissed together — the real API's own `include_dismissed`
+   * toggle is applied client-side here since both are already in hand. */
   alerts: PlatformAlert[];
 }

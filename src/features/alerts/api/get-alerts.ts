@@ -11,6 +11,7 @@ export async function getAlerts(): Promise<AlertsPageData> {
   cacheLife("seconds");
   cacheTag(cacheTags.alerts);
 
-  // TODO(api): replace with `GET /admin/platform-alerts?status=active`.
+  // TODO(api): replace with `GET /api/admin/alerts?include_dismissed=true`;
+  // dismiss via `POST /api/admin/alerts/{kind}/dismiss`.
   return alertsFixture;
 }
