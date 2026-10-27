@@ -2,6 +2,7 @@
 
 import { Download } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { DataTable } from "@/components/data-display/data-table";
 import { PageToolbar } from "@/components/layout/page-toolbar";
@@ -14,47 +15,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usersColumns } from "@/features/users/components/users-columns";
-import type { Plan, PlatformUser, UserSegment } from "@/features/users/types";
+import { createUsersColumns } from "@/features/users/components/users-columns";
+import { UserDetailSheet } from "@/features/users/components/user-detail-sheet";
+import { PLAN_TIERS, planTierLabel } from "@/features/users/lib";
+import type { AdminUserDetails } from "@/features/users/types";
 
-const segments: { value: UserSegment; label: string }[] = [
-  { value: "all", label: "All users" },
-  { value: "admins", label: "Admins" },
-  { value: "support", label: "Support access" },
-  { value: "flagged", label: "Flagged" },
-];
-
-const plans: Plan[] = ["Starter", "Growth", "Pro", "Agency"];
-
-function matchesSegment(user: PlatformUser, segment: UserSegment): boolean {
-  switch (segment) {
-    case "admins":
-      return user.role === "admin";
-    case "support":
-      return user.role === "support";
-    case "flagged":
-      return user.flagged;
-    default:
-      return true;
-  }
-}
-
-interface UsersTableProps {
-  users: PlatformUser[];
-  totalCount: number;
-}
-
-export function UsersTable({ users, totalCount }: UsersTableProps) {
-  const [segment, setSegment] = useState<UserSegment>("all");
-  const [plan, setPlan] = useState<Plan | "all">("all");
+export function UsersTable({ users: initialUsers }: { users: AdminUserDetails[] }) {
+  const [users, setUsers] = useState(initialUsers);
+  const [tierFilter, setTierFilter] = useState<string>("all");
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const visible = useMemo(
     () =>
-      users.filter(
-        (user) => matchesSegment(user, segment) && (plan === "all" || user.plan === plan),
-      ),
-    [users, segment, plan],
+      tierFilter === "all"
+        ? users
+        : users.filter((user) => (user.subscriptionTier ?? "free") === tierFilter),
+    [users, tierFilter],
+  );
+
+  const selectedUser = users.find((user) => user.id === selectedUserId) ?? null;
+
+  const updateUser = (userId: string, patch: Partial<AdminUserDetails>) => {
+    setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, ...patch } : user)));
+  };
+
+  const columns = useMemo(
+    () =>
+      createUsersColumns((user) => {
+        setSelectedUserId(user.id);
+        setSheetOpen(true);
+      }),
+    [],
   );
 
   return (
@@ -62,49 +54,75 @@ export function UsersTable({ users, totalCount }: UsersTableProps) {
       <PageToolbar
         actions={
           <>
-            <Select value={plan} onValueChange={(value) => setPlan(value as Plan | "all")}>
-              <SelectTrigger className="w-36" aria-label="Filter by plan">
+            <Select value={tierFilter} onValueChange={setTierFilter}>
+              <SelectTrigger className="w-40" aria-label="Filter by plan">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All plans</SelectItem>
-                {plans.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {p}
+                <SelectItem value="free">Free</SelectItem>
+                {PLAN_TIERS.map((tier) => (
+                  <SelectItem key={tier} value={tier}>
+                    {planTierLabel(tier)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button>
+            <Button
+              onClick={() =>
+                toast.success(`Exported ${users.length} email${users.length === 1 ? "" : "s"}.`)
+              }
+            >
               <Download />
-              Export CSV
+              Export emails
             </Button>
           </>
         }
-      >
-        <Tabs value={segment} onValueChange={(value) => setSegment(value as UserSegment)}>
-          <TabsList>
-            {segments.map((s) => (
-              <TabsTrigger key={s.value} value={s.value}>
-                {s.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      </PageToolbar>
+      />
 
       <Card className="py-3">
         <div className="px-3">
           <DataTable
-            columns={usersColumns}
+            columns={columns}
             data={visible}
             searchPlaceholder="Search name or email…"
             pageSize={8}
-            totalCount={segment === "all" && plan === "all" ? totalCount : undefined}
             emptyMessage="No users match these filters."
           />
         </div>
       </Card>
+
+      <UserDetailSheet
+        user={selectedUser}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        onAdjustCredits={(userId, amount) => {
+          const user = users.find((u) => u.id === userId);
+          if (!user) return;
+          updateUser(userId, { creditsBalance: Math.max(0, (user.creditsBalance ?? 0) + amount) });
+        }}
+        onAdjustTrialCredits={(userId, amount) => {
+          const user = users.find((u) => u.id === userId);
+          if (!user) return;
+          updateUser(userId, { creditsBalance: Math.max(0, (user.creditsBalance ?? 0) + amount) });
+        }}
+        onExpireTrial={(userId) => {
+          updateUser(userId, { trialEnd: new Date().toISOString(), creditsBalance: 0 });
+        }}
+        onSetSubscription={(userId, planTierId) => {
+          updateUser(userId, {
+            subscriptionTier: planTierId,
+            trialStart: undefined,
+            trialEnd: undefined,
+          });
+        }}
+        onClearSubscription={(userId) => {
+          updateUser(userId, { subscriptionTier: undefined });
+        }}
+        onToggleAdmin={(userId, nextIsAdmin) => {
+          updateUser(userId, { isAdmin: nextIsAdmin });
+        }}
+      />
     </div>
   );
 }
