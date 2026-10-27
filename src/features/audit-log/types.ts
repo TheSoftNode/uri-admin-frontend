@@ -6,7 +6,7 @@ export interface AuditEntry {
   action: string;
   target: string;
   detail: string;
-  when: string;
+  whenIso: string;
   category: AuditCategory;
 }
 

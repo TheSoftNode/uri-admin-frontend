@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { PageToolbar } from "@/components/layout/page-toolbar";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
@@ -23,7 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { downloadTextFile, toCsv, withinRange, type AuditRange } from "@/features/audit-log/lib";
 import type { AuditCategory, AuditEntry } from "@/features/audit-log/types";
+import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const categoryMeta: Record<AuditCategory, { icon: LucideIcon; className: string }> = {
@@ -45,18 +48,28 @@ const filters: { value: AuditCategory | "all"; label: string }[] = [
 
 export function AuditTimeline({ entries }: { entries: AuditEntry[] }) {
   const [category, setCategory] = useState<AuditCategory | "all">("all");
-  const [range, setRange] = useState("7d");
+  const [range, setRange] = useState<AuditRange>("7d");
 
   const visible = useMemo(
-    () => (category === "all" ? entries : entries.filter((entry) => entry.category === category)),
-    [entries, category],
+    () =>
+      entries.filter(
+        (entry) => (category === "all" || entry.category === category) && withinRange(entry, range),
+      ),
+    [entries, category, range],
   );
 
   return (
     <div className="flex flex-col gap-4">
       <PageToolbar
         actions={
-          <Button variant="secondary">
+          <Button
+            variant="secondary"
+            disabled={visible.length === 0}
+            onClick={() => {
+              downloadTextFile(`audit-log-${range}.csv`, toCsv(visible), "text/csv;charset=utf-8;");
+              toast.success(`Exported ${visible.length} entries.`);
+            }}
+          >
             <Download />
             Export
           </Button>
@@ -77,7 +90,7 @@ export function AuditTimeline({ entries }: { entries: AuditEntry[] }) {
             ))}
           </SelectContent>
         </Select>
-        <Select value={range} onValueChange={setRange}>
+        <Select value={range} onValueChange={(value) => setRange(value as AuditRange)}>
           <SelectTrigger className="w-40" aria-label="Time range">
             <SelectValue />
           </SelectTrigger>
@@ -116,12 +129,17 @@ export function AuditTimeline({ entries }: { entries: AuditEntry[] }) {
                     <p className="text-xs text-subtle-foreground">{entry.detail}</p>
                   </div>
                   <time className="shrink-0 font-mono text-[11px] text-subtle-foreground">
-                    {entry.when}
+                    {formatDateTime(entry.whenIso)}
                   </time>
                 </article>
               </StaggerItem>
             );
           })}
+          {visible.length === 0 ? (
+            <p className="py-10 text-center text-sm text-subtle-foreground">
+              No actions in this range.
+            </p>
+          ) : null}
         </Stagger>
       </Card>
     </div>
