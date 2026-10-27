@@ -1,4 +1,4 @@
-import { GlobalSearch } from "@/components/layout/global-search";
+import { CommandPalette } from "@/components/command-palette/command-palette";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { NotificationsButton } from "@/components/layout/notifications-button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -14,7 +14,7 @@ export function Topbar() {
         <TopbarTitle />
       </div>
       <div className="flex shrink-0 items-center gap-2.5">
-        <GlobalSearch />
+        <CommandPalette />
         <ThemeToggle />
         <NotificationsButton />
         <UserMenu />

@@ -191,7 +191,6 @@ export function AccessCodesTable({
         onOpenChange={setSheetOpen}
         onRestore={onRestoreRedemption}
         onRevoke={onRevokeRedemption}
-        onResend={() => {}}
       />
     </>
   );

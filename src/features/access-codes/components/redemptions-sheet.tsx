@@ -23,7 +23,6 @@ interface RedemptionsSheetProps {
   onOpenChange: (open: boolean) => void;
   onRestore: (code: string, email: string) => void;
   onRevoke: (code: string, email: string) => void;
-  onResend: (code: string, email: string) => void;
 }
 
 export function RedemptionsSheet({
@@ -33,7 +32,6 @@ export function RedemptionsSheet({
   onOpenChange,
   onRestore,
   onRevoke,
-  onResend,
 }: RedemptionsSheetProps) {
   if (!code) return null;
 
@@ -112,7 +110,8 @@ export function RedemptionsSheet({
                       variant="outline"
                       onClick={() => {
                         if (!r.email) return;
-                        onResend(code, r.email);
+                        // TODO(api): POST /api/admin/access-codes/{code}/send-email — a
+                        // fire-and-forget side effect with no local state to reflect.
                         toast.success(`Resent the code to ${r.email}.`);
                       }}
                     >
