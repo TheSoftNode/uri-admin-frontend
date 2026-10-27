@@ -1,0 +1,66 @@
+import type { AlertsPageData } from "@/features/alerts/types";
+
+export const alertsFixture: AlertsPageData = {
+  kpis: [
+    { id: "active", label: "Active alerts", value: "7", tone: "critical" },
+    { id: "platforms", label: "Platforms affected", value: "3" },
+    { id: "impacted", label: "Businesses impacted", value: "214", tone: "warning" },
+    { id: "ttr", label: "Avg time-to-resolution", value: "41m" },
+  ],
+  alerts: [
+    {
+      id: "al_01",
+      title: "OpenAI account out of credit",
+      severity: "critical",
+      platform: "OpenAI",
+      businessesImpacted: 182,
+      firstSeen: "14m ago",
+      status: "open",
+    },
+    {
+      id: "al_02",
+      title: "LinkedIn UGC video uploads returning 429",
+      severity: "warning",
+      platform: "LinkedIn",
+      businessesImpacted: 9,
+      firstSeen: "1h ago",
+      status: "acknowledged",
+    },
+    {
+      id: "al_03",
+      title: "Apify TikTok actor cost spike",
+      severity: "warning",
+      platform: "Apify",
+      businessesImpacted: 1,
+      firstSeen: "2h ago",
+      status: "open",
+    },
+    {
+      id: "al_04",
+      title: "Meta token refresh failures rising",
+      severity: "warning",
+      platform: "Meta",
+      businessesImpacted: 42,
+      firstSeen: "3h ago",
+      status: "open",
+    },
+    {
+      id: "al_05",
+      title: "TikTok ads API latency elevated",
+      severity: "info",
+      platform: "TikTok",
+      businessesImpacted: 6,
+      firstSeen: "5h ago",
+      status: "monitoring",
+    },
+    {
+      id: "al_06",
+      title: "Google News edition feed empty for NG:en",
+      severity: "info",
+      platform: "Apify",
+      businessesImpacted: 1,
+      firstSeen: "6h ago",
+      status: "monitoring",
+    },
+  ],
+};
