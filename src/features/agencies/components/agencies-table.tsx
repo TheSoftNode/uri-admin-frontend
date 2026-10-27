@@ -84,7 +84,7 @@ export function AgenciesTable({ agencies, onViewPortfolio }: AgenciesTableProps)
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       enableSorting: false,
       meta: { align: "right" },
       cell: ({ row }) => (

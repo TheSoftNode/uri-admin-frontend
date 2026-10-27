@@ -59,7 +59,7 @@ function createColumns(onView: (playbook: Playbook) => void): ColumnDef<Playbook
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       enableSorting: false,
       meta: { align: "right" },
       cell: ({ row }) => (

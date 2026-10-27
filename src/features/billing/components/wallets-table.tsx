@@ -95,7 +95,7 @@ export function WalletsTable({ wallets, onAdjust }: WalletsTableProps) {
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       enableSorting: false,
       meta: { align: "right" },
       cell: ({ row }) => (

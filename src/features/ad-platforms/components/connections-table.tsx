@@ -54,7 +54,7 @@ export function ConnectionsTable({ connections, notifiedIds, onNotify }: Connect
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       enableSorting: false,
       meta: { align: "right" },
       cell: ({ row }) => {

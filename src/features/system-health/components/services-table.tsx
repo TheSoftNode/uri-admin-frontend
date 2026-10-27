@@ -40,7 +40,7 @@ const columns: ColumnDef<ServiceHealth, unknown>[] = [
   },
   {
     id: "actions",
-    header: "",
+    header: "Actions",
     enableSorting: false,
     meta: { align: "right" },
     cell: ({ row }) =>

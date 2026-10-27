@@ -104,7 +104,7 @@ export function ReviewQueueTable({ items, onOpenItem }: ReviewQueueTableProps) {
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       enableSorting: false,
       meta: { align: "right" },
       cell: ({ row }) => (

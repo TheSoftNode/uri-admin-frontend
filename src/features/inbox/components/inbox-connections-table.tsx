@@ -74,7 +74,7 @@ export function InboxConnectionsTable({
     },
     {
       id: "actions",
-      header: "",
+      header: "Actions",
       enableSorting: false,
       meta: { align: "right" },
       cell: ({ row }) => {
