@@ -1,22 +1,23 @@
-import { Plus } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { KeyValueRow } from "@/components/data-display/key-value-row";
 import { SectionCard } from "@/components/data-display/section-card";
 import { StatusBadge } from "@/components/data-display/status-badge";
 import { Button } from "@/components/ui/button";
+import { AddAdminSheet } from "@/features/settings/components/add-admin-sheet";
 import type { AdminAccount } from "@/features/settings/types";
 
-export function AdminAccessCard({ admins }: { admins: AdminAccount[] }) {
+export function AdminAccessCard({ admins: initial }: { admins: AdminAccount[] }) {
+  const [admins, setAdmins] = useState(initial);
+
   return (
     <SectionCard
       title="Admin access"
       description="ADMIN_EMAILS allowlist + per-user is_admin flag"
-      action={
-        <Button variant="soft" size="sm">
-          <Plus />
-          Add admin
-        </Button>
-      }
+      action={<AddAdminSheet onAdd={(admin) => setAdmins((prev) => [...prev, admin])} />}
     >
       <div className="flex flex-col">
         {admins.map((admin) => (
@@ -31,7 +32,15 @@ export function AdminAccessCard({ admins }: { admins: AdminAccount[] }) {
               </span>
             }
           >
-            <Button variant="ghost" size="sm" className="text-critical hover:bg-critical-soft">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-critical hover:bg-critical-soft"
+              onClick={() => {
+                setAdmins((prev) => prev.filter((a) => a.email !== admin.email));
+                toast.success(`Revoked admin access for ${admin.email}.`);
+              }}
+            >
               Remove
             </Button>
           </KeyValueRow>
