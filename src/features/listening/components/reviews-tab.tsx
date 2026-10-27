@@ -4,114 +4,106 @@ import { CheckCircle2, ChevronDown, Inbox, Star } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { EmptyState } from "@/components/data-display/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { EmptyState } from "@/features/listening/components/empty-state";
 import type { PendingReview } from "@/features/listening/types";
 import { cn } from "@/lib/utils";
 
 function ReviewRow({
-  review,
-  onResolve,
+  r,
+  onResolved,
   onMarkGolden,
 }: {
-  review: PendingReview;
-  onResolve: (review: PendingReview, patch: { onTopic?: boolean; intent?: string; note?: string }) => void;
-  onMarkGolden: (review: PendingReview) => void;
+  r: PendingReview;
+  onResolved: (r: PendingReview, patch: { onTopic?: boolean; intent?: string; note?: string }) => void;
+  onMarkGolden: (r: PendingReview) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [onTopic, setOnTopic] = useState<boolean | undefined>(review.onTopic);
-  const [intent, setIntent] = useState(review.intent ?? "");
+  const [onTopic, setOnTopic] = useState<boolean | undefined>(r.onTopic);
+  const [intent, setIntent] = useState(r.intent || "");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
 
   const resolve = () => {
     setBusy(true);
-    onResolve(review, { onTopic, intent: intent || undefined, note: note || undefined });
+    onResolved(r, { onTopic, intent: intent || undefined, note: note || undefined });
     toast.success("Correction recorded.");
-    window.setTimeout(() => setBusy(false), 150);
+    setBusy(false);
   };
 
   const markGolden = () => {
     setBusy(true);
-    onMarkGolden(review);
+    onMarkGolden(r);
     toast.success("Marked as a golden example.");
-    window.setTimeout(() => setBusy(false), 150);
+    setBusy(false);
   };
 
   return (
-    <div className="space-y-3 rounded-2xl border bg-card p-4 shadow-card">
-      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        <Badge variant="outline">{review.market}</Badge>
-        <span>confidence {review.confidence != null ? Math.round(review.confidence * 100) : "—"}%</span>
-        <span>·</span>
-        <span>{review.intent || "no intent yet"}</span>
-        <span>·</span>
-        <span>on-topic: {review.onTopic === undefined ? "—" : review.onTopic ? "yes" : "no"}</span>
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          className="ml-auto inline-flex items-center gap-1 font-semibold text-brand"
-        >
-          <ChevronDown className={cn("size-3 transition-transform", open && "rotate-180")} />
-          {open ? "Close" : "Resolve"}
-        </button>
-      </div>
-
-      {review.text ? <p className="text-[13px] leading-relaxed text-foreground/90">&ldquo;{review.text}&rdquo;</p> : null}
-      {review.url ? (
-        <a href={review.url} target="_blank" rel="noreferrer" className="text-xs font-medium text-brand">
-          View source
-        </a>
-      ) : null}
-
-      {open ? (
-        <div className="space-y-3 rounded-xl bg-muted/40 p-3.5">
-          <div className="flex flex-wrap items-center gap-4">
-            <label className="flex items-center gap-1.5 text-xs text-foreground">
-              <input
-                type="radio"
-                name={`${review.market}-${review.sourceId}`}
-                checked={onTopic === true}
-                onChange={() => setOnTopic(true)}
-              />
-              On-topic
-            </label>
-            <label className="flex items-center gap-1.5 text-xs text-foreground">
-              <input
-                type="radio"
-                name={`${review.market}-${review.sourceId}`}
-                checked={onTopic === false}
-                onChange={() => setOnTopic(false)}
-              />
-              Off-topic
-            </label>
-            <Input
-              value={intent}
-              onChange={(e) => setIntent(e.target.value)}
-              placeholder="Corrected intent (optional)"
-              className="h-8 max-w-56 flex-1 text-xs"
-            />
-          </div>
-          <Textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Note for the training record (optional)"
-            className="min-h-16 text-xs"
-          />
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" disabled={busy} onClick={resolve}>
-              <CheckCircle2 /> Save correction
-            </Button>
-            <Button size="sm" variant="outline" disabled={busy} onClick={markGolden}>
-              <Star /> Mark golden
-            </Button>
-          </div>
+    <Card className="overflow-hidden py-0">
+      <CardContent className="space-y-2.5 p-4">
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+          <Badge variant="outline" className="text-[10px]">
+            {r.market}
+          </Badge>
+          <span>confidence {r.confidence != null ? Math.round(r.confidence * 100) : "—"}%</span>
+          <span>·</span>
+          <span>{r.intent || "no intent yet"}</span>
+          <span>·</span>
+          <span>on-topic: {r.onTopic === undefined ? "—" : r.onTopic ? "yes" : "no"}</span>
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="ml-auto inline-flex items-center gap-1 font-medium text-primary"
+          >
+            <ChevronDown className={cn("h-3 w-3 transition-transform", open && "rotate-180")} />
+            {open ? "Close" : "Resolve"}
+          </button>
         </div>
-      ) : null}
-    </div>
+        {r.text && <p className="text-[13px] leading-relaxed text-foreground/90">&quot;{r.text}&quot;</p>}
+        {r.url && (
+          <a href={r.url} target="_blank" rel="noreferrer" className="text-[11.5px] text-primary">
+            View source
+          </a>
+        )}
+        {open && (
+          <div className="space-y-2.5 rounded-lg border border-border bg-muted/20 p-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-1.5 text-[12px] text-foreground">
+                <input type="radio" checked={onTopic === true} onChange={() => setOnTopic(true)} /> On-topic
+              </label>
+              <label className="flex items-center gap-1.5 text-[12px] text-foreground">
+                <input type="radio" checked={onTopic === false} onChange={() => setOnTopic(false)} /> Off-topic
+              </label>
+              <Input
+                value={intent}
+                onChange={(e) => setIntent(e.target.value)}
+                placeholder="Corrected intent (optional)"
+                className="h-7 max-w-55 text-[12px]"
+              />
+            </div>
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Note for the training record (optional)"
+              className="min-h-15 text-[12px]"
+            />
+            <div className="flex gap-2">
+              <Button size="xs" disabled={busy} onClick={resolve}>
+                <CheckCircle2 className="h-3 w-3" />
+                Save correction
+              </Button>
+              <Button size="xs" variant="outline" disabled={busy} onClick={markGolden}>
+                <Star className="h-3 w-3" /> Mark golden
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -135,7 +127,12 @@ export function ReviewsTab({ reviews, onResolve, onMarkGolden }: ReviewsTabProps
   return (
     <div className="space-y-3">
       {reviews.map((r) => (
-        <ReviewRow key={`${r.market}:${r.sourceId}`} review={r} onResolve={onResolve} onMarkGolden={onMarkGolden} />
+        <ReviewRow
+          key={`${r.market}:${r.sourceId}`}
+          r={r}
+          onResolved={onResolve}
+          onMarkGolden={onMarkGolden}
+        />
       ))}
     </div>
   );

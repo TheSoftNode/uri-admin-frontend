@@ -1,17 +1,14 @@
-import type { LucideIcon } from "lucide-react";
-
-import type { Tone } from "@/types/tone";
-
 /* ─────────────────────────── Topics ─────────────────────────── */
 
 export type TopicStatus = "observed" | "candidate" | "monitored" | "paused" | "retired";
 
-export const topicStatusMeta: Record<TopicStatus, { label: string; tone: Tone }> = {
-  observed: { label: "Observed", tone: "neutral" },
-  candidate: { label: "Candidate", tone: "warning" },
-  monitored: { label: "Monitored", tone: "success" },
-  paused: { label: "Paused", tone: "info" },
-  retired: { label: "Retired", tone: "critical" },
+/** Matches ListeningCurationPage.tsx's TOPIC_STATUS_META exactly. */
+export const topicStatusMeta: Record<TopicStatus, { label: string; className: string }> = {
+  observed: { label: "Observed", className: "bg-muted text-muted-foreground border-border" },
+  candidate: { label: "Candidate", className: "bg-amber-50 text-amber-700 border-amber-200" },
+  monitored: { label: "Monitored", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  paused: { label: "Paused", className: "bg-sky-50 text-sky-700 border-sky-200" },
+  retired: { label: "Retired", className: "bg-rose-50 text-rose-700 border-rose-200" },
 };
 
 export interface CurationMarket {
@@ -151,12 +148,6 @@ export type ListeningTabId =
   | "golden"
   | "replay"
   | "metrics";
-
-export interface ListeningTabDef {
-  id: ListeningTabId;
-  label: string;
-  icon: LucideIcon;
-}
 
 /* ─────────────────────────── Page bundle ─────────────────────────── */
 

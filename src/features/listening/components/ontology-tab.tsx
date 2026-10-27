@@ -4,33 +4,12 @@ import { BookOpen, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { EmptyState } from "@/components/data-display/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/features/listening/components/empty-state";
 import type { OntologyCategory } from "@/features/listening/types";
-
-interface OntologyTabProps {
-  categories: OntologyCategory[];
-  onAddTerm: (categoryId: string, term: string, lang?: string) => void;
-  onRemoveTerm: (categoryId: string, term: string, lang?: string) => void;
-}
-
-function TermChip({ term, onRemove }: { term: string; onRemove: () => void }) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full border bg-muted px-2.5 py-0.5 text-xs text-foreground">
-      {term}
-      <button
-        type="button"
-        onClick={onRemove}
-        aria-label={`Remove ${term}`}
-        className="text-muted-foreground transition-colors hover:text-critical"
-      >
-        <X className="size-3" />
-      </button>
-    </span>
-  );
-}
 
 function OntologyCategoryCard({
   category,
@@ -43,67 +22,107 @@ function OntologyCategoryCard({
 }) {
   const [newTerm, setNewTerm] = useState("");
   const [newLang, setNewLang] = useState("");
+  const [busy, setBusy] = useState(false);
 
   const add = () => {
     const term = newTerm.trim();
     if (!term) return;
+    setBusy(true);
     onAddTerm(term, newLang.trim() || undefined);
     setNewTerm("");
     toast.success(`Added "${term}".`);
+    setBusy(false);
+  };
+
+  const remove = (term: string, lang?: string) => {
+    setBusy(true);
+    onRemoveTerm(term, lang);
+    setBusy(false);
   };
 
   return (
-    <div className="space-y-3.5 rounded-2xl border bg-card p-5 shadow-card">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-semibold text-foreground">{category.label}</p>
-        <Badge variant="outline">{category.status}</Badge>
-      </div>
-
-      <div className="space-y-1.5">
-        <p className="text-xs font-semibold text-muted-foreground">Core terms</p>
-        <div className="flex flex-wrap gap-1.5">
-          {category.coreTerms.length === 0 ? (
-            <span className="text-xs text-subtle-foreground">None yet.</span>
-          ) : (
-            category.coreTerms.map((t) => (
-              <TermChip key={t} term={t} onRemove={() => onRemoveTerm(t)} />
-            ))
-          )}
+    <Card>
+      <CardContent className="space-y-3 p-4">
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-[14px] font-semibold text-foreground">{category.label}</div>
+          <Badge variant="outline" className="text-[10px]">
+            {category.status}
+          </Badge>
         </div>
-      </div>
-
-      {Object.entries(category.localTerms).map(([lang, terms]) => (
-        <div key={lang} className="space-y-1.5">
-          <p className="text-xs font-semibold text-muted-foreground">Local terms ({lang})</p>
+        <div className="space-y-1">
+          <div className="text-[11px] font-medium text-muted-foreground">Core terms</div>
           <div className="flex flex-wrap gap-1.5">
-            {terms.map((t) => (
-              <TermChip key={t} term={t} onRemove={() => onRemoveTerm(t, lang)} />
+            {category.coreTerms.map((t) => (
+              <span
+                key={t}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] text-foreground"
+              >
+                {t}
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => remove(t)}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
             ))}
+            {category.coreTerms.length === 0 && (
+              <span className="text-[11px] text-muted-foreground">None yet.</span>
+            )}
           </div>
         </div>
-      ))}
-
-      <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
-        <Input
-          placeholder="New term…"
-          value={newTerm}
-          onChange={(e) => setNewTerm(e.target.value)}
-          className="h-9 flex-1 text-[13px]"
-        />
-        <div className="flex gap-2">
+        {Object.entries(category.localTerms).map(([lang, terms]) => (
+          <div key={lang} className="space-y-1">
+            <div className="text-[11px] font-medium text-muted-foreground">Local terms ({lang})</div>
+            <div className="flex flex-wrap gap-1.5">
+              {terms.map((t) => (
+                <span
+                  key={t}
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] text-foreground"
+                >
+                  {t}
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => remove(t, lang)}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div className="flex items-center gap-2 pt-1">
+          <Input
+            placeholder="New term…"
+            value={newTerm}
+            onChange={(e) => setNewTerm(e.target.value)}
+            className="h-8 flex-1 text-[12px]"
+          />
           <Input
             placeholder="Lang (optional)"
             value={newLang}
             onChange={(e) => setNewLang(e.target.value)}
-            className="h-9 w-28 text-[13px]"
+            className="h-8 w-28 text-[12px]"
           />
-          <Button variant="outline" size="sm" disabled={!newTerm.trim()} onClick={add}>
-            <Plus /> Add
+          <Button size="sm" variant="outline" disabled={busy || !newTerm.trim()} onClick={add}>
+            <Plus className="h-3.5 w-3.5" />
+            Add
           </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
+}
+
+interface OntologyTabProps {
+  categories: OntologyCategory[];
+  onAddTerm: (categoryId: string, term: string, lang?: string) => void;
+  onRemoveTerm: (categoryId: string, term: string, lang?: string) => void;
 }
 
 export function OntologyTab({ categories, onAddTerm, onRemoveTerm }: OntologyTabProps) {
@@ -130,7 +149,7 @@ export function OntologyTab({ categories, onAddTerm, onRemoveTerm }: OntologyTab
         placeholder="Filter categories…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="h-9 max-w-xs text-[13px]"
+        className="h-8 max-w-xs text-[13px]"
       />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {filtered.map((c) => (

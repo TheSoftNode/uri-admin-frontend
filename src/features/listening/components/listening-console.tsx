@@ -1,17 +1,9 @@
 "use client";
 
 import { BookOpen, FlaskConical, Gauge, Globe2, Inbox, Settings2, ShieldCheck, Star, Tags } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { PageToolbar } from "@/components/layout/page-toolbar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GoldenTab } from "@/features/listening/components/golden-tab";
 import { MetricsTab } from "@/features/listening/components/metrics-tab";
 import { OntologyTab } from "@/features/listening/components/ontology-tab";
@@ -25,14 +17,15 @@ import type {
   GoldenExample,
   ListeningConfig,
   ListeningPageData,
-  ListeningTabDef,
+  ListeningTabId,
   PendingReview,
   ReplayResult,
   SourcePermission,
   TopicStatus,
 } from "@/features/listening/types";
+import { cn } from "@/lib/utils";
 
-const TABS: ListeningTabDef[] = [
+const TABS: { id: ListeningTabId; label: string; icon: LucideIcon }[] = [
   { id: "topics", label: "Topics", icon: Tags },
   { id: "sources", label: "Sources", icon: ShieldCheck },
   { id: "ontology", label: "Ontology", icon: BookOpen },
@@ -43,13 +36,35 @@ const TABS: ListeningTabDef[] = [
   { id: "metrics", label: "Metrics", icon: Gauge },
 ];
 
+const SelectEl = ({
+  value,
+  onChange,
+  children,
+  className,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <select
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className={cn("h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground", className)}
+  >
+    {children}
+  </select>
+);
+
 /**
- * Client-side console shell: holds tab and market-filter state, and applies
- * every tab's mutation to its own local copy of the fixture data (toast
- * feedback, no persistence) — the same shape a real mutation will fill in
- * once each tab is wired to its endpoint.
+ * Client-side console shell — ported from ListeningCurationPage.tsx's main
+ * component, same tab bar, same market selector, same per-tab components.
+ * Every tab's mutation applies to its own local copy of the fixture data
+ * (toast feedback, no persistence) — the same shape a real mutation fills
+ * in once each tab is wired to its endpoint.
  */
 export function ListeningConsole({ data }: { data: ListeningPageData }) {
+  const [activeTab, setActiveTab] = useState<ListeningTabId>("topics");
   const [market, setMarket] = useState("");
   const [topics, setTopics] = useState(data.topics);
   const [sources, setSources] = useState(data.sources);
@@ -65,9 +80,7 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
   const decideTopic = (topic: CurationTopic, status: TopicStatus) => {
     setTopics((prev) =>
       prev.map((t) =>
-        t.market === topic.market && t.key === topic.key
-          ? { ...t, status, decidedBy: "Ada Okafor" }
-          : t,
+        t.market === topic.market && t.key === topic.key ? { ...t, status, decidedBy: "Ada Okafor" } : t,
       ),
     );
   };
@@ -97,9 +110,9 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
     setOntology((prev) =>
       prev.map((c) => {
         if (c.id !== categoryId) return c;
-        if (!lang) return { ...c, coreTerms: c.coreTerms.filter((t) => t !== term) };
+        if (!lang) return { ...c, coreTerms: c.coreTerms.filter((x) => x !== term) };
         const existing = c.localTerms[lang] ?? [];
-        return { ...c, localTerms: { ...c.localTerms, [lang]: existing.filter((t) => t !== term) } };
+        return { ...c, localTerms: { ...c.localTerms, [lang]: existing.filter((x) => x !== term) } };
       }),
     );
   };
@@ -145,76 +158,78 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
   const goldenForMarket = market ? golden.filter((g) => g.market === market) : golden;
 
   return (
-    <Tabs defaultValue="topics" className="gap-5">
-      <PageToolbar
-        actions={
-          <div className="flex items-center gap-2">
-            <Globe2 className="size-4 text-muted-foreground" />
-            <Select value={market || "all"} onValueChange={(v) => setMarket(v === "all" ? "" : v)}>
-              <SelectTrigger size="sm" className="min-w-52">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All markets ({data.markets.length})</SelectItem>
-                {data.markets.map((m) => (
-                  <SelectItem key={m.key} value={m.key}>
-                    {m.label}
-                    {m.subscriberCount ? ` · ${m.subscriberCount} subscribers` : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        }
-      >
-        <div className="w-full overflow-x-auto">
-          <TabsList>
-            {TABS.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id}>
-                <tab.icon /> {tab.label}
-              </TabsTrigger>
+    <div>
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <p className="max-w-2xl text-[13.5px] text-muted-foreground">
+          Topics, sources, review queue, golden datasets, offline replay and product metrics for the Listening
+          Intelligence Platform — shared across every subscribed business, admin-only.
+        </p>
+        <div className="flex items-center gap-2">
+          <Globe2 className="h-4 w-4 text-muted-foreground" />
+          <SelectEl value={market} onChange={setMarket} className="min-w-50">
+            <option value="">All markets ({data.markets.length})</option>
+            {data.markets.map((m) => (
+              <option key={m.key} value={m.key}>
+                {m.label || m.key} {m.subscriberCount ? `· ${m.subscriberCount} subscribers` : ""}
+              </option>
             ))}
-          </TabsList>
+          </SelectEl>
         </div>
-      </PageToolbar>
+      </div>
 
-      <TabsContent value="topics">
-        <TopicsTab
-          markets={data.markets}
-          topics={topics}
-          topicHistory={data.topicHistory}
-          market={market}
-          onDecide={decideTopic}
-        />
-      </TabsContent>
-      <TabsContent value="sources">
-        <SourcesTab sources={sources} onToggle={toggleSource} />
-      </TabsContent>
-      <TabsContent value="ontology">
-        <OntologyTab categories={ontology} onAddTerm={addOntologyTerm} onRemoveTerm={removeOntologyTerm} />
-      </TabsContent>
-      <TabsContent value="settings">
-        <SettingsTab config={config} onSave={saveConfig} />
-      </TabsContent>
-      <TabsContent value="reviews">
-        <ReviewsTab reviews={reviewsForMarket} onResolve={resolveReview} onMarkGolden={markGolden} />
-      </TabsContent>
-      <TabsContent value="golden">
-        <GoldenTab items={goldenForMarket} onRemove={removeGolden} />
-      </TabsContent>
-      <TabsContent value="replay">
-        <ReplayTab markets={data.markets} market={market} results={replayResults} onRun={runReplay} />
-      </TabsContent>
-      <TabsContent value="metrics">
-        <MetricsTab
-          markets={data.markets}
-          market={market}
-          onMarketChange={setMarket}
-          windowDays={windowDays}
-          onWindowDaysChange={setWindowDays}
-          metrics={metrics}
-        />
-      </TabsContent>
-    </Tabs>
+      <div className="mt-6 flex gap-1 overflow-x-auto border-b border-border">
+        {TABS.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "flex items-center gap-1.5 border-b-2 px-3.5 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors",
+                isActive ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-5">
+        {activeTab === "topics" && (
+          <TopicsTab
+            markets={data.markets}
+            topics={topics}
+            topicHistory={data.topicHistory}
+            market={market}
+            onDecide={decideTopic}
+          />
+        )}
+        {activeTab === "sources" && <SourcesTab sources={sources} onToggle={toggleSource} />}
+        {activeTab === "ontology" && (
+          <OntologyTab categories={ontology} onAddTerm={addOntologyTerm} onRemoveTerm={removeOntologyTerm} />
+        )}
+        {activeTab === "settings" && <SettingsTab config={config} onSave={saveConfig} />}
+        {activeTab === "reviews" && (
+          <ReviewsTab reviews={reviewsForMarket} onResolve={resolveReview} onMarkGolden={markGolden} />
+        )}
+        {activeTab === "golden" && <GoldenTab items={goldenForMarket} onRemove={removeGolden} />}
+        {activeTab === "replay" && (
+          <ReplayTab markets={data.markets} market={market} results={replayResults} onRun={runReplay} />
+        )}
+        {activeTab === "metrics" && (
+          <MetricsTab
+            markets={data.markets}
+            market={market}
+            onMarketChange={setMarket}
+            windowDays={windowDays}
+            onWindowDaysChange={setWindowDays}
+            metrics={metrics}
+          />
+        )}
+      </div>
+    </div>
   );
 }

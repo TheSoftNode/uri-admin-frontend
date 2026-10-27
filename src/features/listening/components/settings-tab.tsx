@@ -5,19 +5,23 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { ListeningConfig } from "@/features/listening/types";
 
-interface SettingsField {
+/** The budget/cadence/threshold knobs most worth an admin changing live
+ * without a deploy — not a generic editor over the whole nested config tree,
+ * which would be sprawl for value nobody's asked to change this way. */
+const SETTINGS_FIELDS: {
+  section: "root" | "score" | "delivery";
   key: string;
   label: string;
   hint: string;
-  get: (cfg: ListeningConfig) => number;
-  set: (cfg: ListeningConfig, value: number) => ListeningConfig;
-}
-
-const SETTINGS_FIELDS: SettingsField[] = [
+  get: (c: ListeningConfig) => number;
+  set: (c: ListeningConfig, v: number) => ListeningConfig;
+}[] = [
   {
+    section: "root",
     key: "monthlyBudgetUsd",
     label: "Monthly budget (USD)",
     hint: "Hard ceiling across every source combined.",
@@ -25,6 +29,7 @@ const SETTINGS_FIELDS: SettingsField[] = [
     set: (c, v) => ({ ...c, monthlyBudgetUsd: v }),
   },
   {
+    section: "root",
     key: "cadenceHours",
     label: "Default cadence (hours)",
     hint: "How often a market collects when nothing is hot.",
@@ -32,42 +37,48 @@ const SETTINGS_FIELDS: SettingsField[] = [
     set: (c, v) => ({ ...c, cadenceHours: v }),
   },
   {
-    key: "score.minScore",
+    section: "score",
+    key: "minScore",
     label: "Minimum card score",
     hint: "A signal below this never becomes a card, regardless of relevance.",
     get: (c) => c.score.minScore,
     set: (c, v) => ({ ...c, score: { ...c.score, minScore: v } }),
   },
   {
-    key: "score.minRelevance",
+    section: "score",
+    key: "minRelevance",
     label: "Minimum relevance",
     hint: "Gates every card independently of the overall score.",
     get: (c) => c.score.minRelevance,
     set: (c, v) => ({ ...c, score: { ...c.score, minRelevance: v } }),
   },
   {
-    key: "score.maxCardsPerRun",
+    section: "score",
+    key: "maxCardsPerRun",
     label: "Max cards per cycle",
     hint: "Per business, per scheduled run.",
     get: (c) => c.score.maxCardsPerRun,
     set: (c, v) => ({ ...c, score: { ...c.score, maxCardsPerRun: v } }),
   },
   {
-    key: "score.maxEvergreenCards",
+    section: "score",
+    key: "maxEvergreenCards",
     label: "Reserved evergreen card slots",
     hint: "Recurring-need cards guaranteed a slot so trends can't crowd them out.",
     get: (c) => c.score.maxEvergreenCards,
     set: (c, v) => ({ ...c, score: { ...c.score, maxEvergreenCards: v } }),
   },
   {
-    key: "delivery.maxAlertsPerWeek",
+    section: "delivery",
+    key: "maxAlertsPerWeek",
     label: "Max alerts per week",
     hint: "Per business, across every channel.",
     get: (c) => c.delivery.maxAlertsPerWeek,
     set: (c, v) => ({ ...c, delivery: { ...c.delivery, maxAlertsPerWeek: v } }),
   },
   {
-    key: "delivery.alertMinScore",
+    section: "delivery",
+    key: "alertMinScore",
     label: "Minimum score for an immediate alert",
     hint: "Higher bar than a plain card — only the most useful opportunities interrupt.",
     get: (c) => c.delivery.alertMinScore,
@@ -84,9 +95,10 @@ export function SettingsTab({ config, onSave }: SettingsTabProps) {
   const [draft, setDraft] = useState(config);
   const [saving, setSaving] = useState(false);
 
-  const setField = (field: SettingsField, raw: string) => {
+  const setField = (field: (typeof SETTINGS_FIELDS)[number], raw: string) => {
+    if (raw === "") return;
     const num = Number(raw);
-    if (raw === "" || Number.isNaN(num)) return;
+    if (Number.isNaN(num)) return;
     setDraft((prev) => field.set(prev, num));
   };
 
@@ -94,33 +106,31 @@ export function SettingsTab({ config, onSave }: SettingsTabProps) {
     setSaving(true);
     onSave(draft);
     toast.success("Settings saved — takes effect on the next scheduled cycle.");
-    window.setTimeout(() => setSaving(false), 200);
+    setSaving(false);
   };
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border bg-card p-5 shadow-card">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <Card>
+        <CardContent className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
           {SETTINGS_FIELDS.map((f) => (
-            <div key={f.key} className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground" htmlFor={f.key}>
-                {f.label}
-              </label>
+            <div key={`${f.section}.${f.key}`} className="space-y-1">
+              <div className="text-[12px] font-medium text-foreground">{f.label}</div>
               <Input
-                id={f.key}
                 type="number"
                 value={f.get(draft)}
                 onChange={(e) => setField(f, e.target.value)}
-                className="h-9 text-[13px]"
+                className="h-8 text-[13px]"
               />
-              <p className="text-xs text-subtle-foreground">{f.hint}</p>
+              <div className="text-[11px] text-muted-foreground">{f.hint}</div>
             </div>
           ))}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       <div className="flex justify-end">
-        <Button size="sm" disabled={saving} onClick={save}>
-          <Settings2 /> Save changes
+        <Button size="sm" onClick={save} disabled={saving}>
+          <Settings2 className="h-3.5 w-3.5" />
+          Save changes
         </Button>
       </div>
     </div>

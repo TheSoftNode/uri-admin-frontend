@@ -18,6 +18,8 @@ const badgeVariants = cva(
         success: "bg-success-soft text-success",
         warning: "bg-warning-soft text-warning",
         critical: "bg-critical-soft text-critical",
+        /** Not in this design system's tone set — alias for pages ported from the real frontend. */
+        destructive: "bg-critical-soft text-critical",
       },
     },
     defaultVariants: {

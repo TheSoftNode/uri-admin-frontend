@@ -1,22 +1,63 @@
 "use client";
 
-import { AlertCircle, CheckCircle2, Gauge, Sparkles } from "lucide-react";
+import { AlertCircle, CheckCircle2, Gauge, type LucideIcon, Sparkles } from "lucide-react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 
-import { Callout } from "@/components/data-display/callout";
-import { EmptyState } from "@/components/data-display/empty-state";
-import { StatCard } from "@/components/data-display/stat-card";
-import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { EmptyState } from "@/features/listening/components/empty-state";
 import type { CurationMarket, ProductMetrics } from "@/features/listening/types";
-import { formatPercent } from "@/lib/format";
+import { cn } from "@/lib/utils";
+
+function KpiCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: ReactNode;
+  hint?: string;
+}) {
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-3 p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Icon className="h-4.5 w-4.5" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xs font-medium text-muted-foreground">{label}</div>
+            <div className="text-xl leading-tight font-semibold tracking-tight text-foreground">{value}</div>
+          </div>
+        </div>
+        {hint && <div className="truncate text-[11px] text-muted-foreground">{hint}</div>}
+      </CardContent>
+    </Card>
+  );
+}
+
+const SelectEl = ({
+  value,
+  onChange,
+  children,
+  className,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <select
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className={cn("h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground", className)}
+  >
+    {children}
+  </select>
+);
 
 interface MetricsTabProps {
   markets: CurationMarket[];
@@ -40,30 +81,24 @@ export function MetricsTab({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Select value={market || "all"} onValueChange={(v) => onMarketChange(v === "all" ? "" : v)}>
-          <SelectTrigger size="sm" className="min-w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All markets</SelectItem>
-            {markets.map((m) => (
-              <SelectItem key={m.key} value={m.key}>
-                {m.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectEl value={market} onChange={onMarketChange}>
+          <option value="">All markets</option>
+          {markets.map((m) => (
+            <option key={m.key} value={m.key}>
+              {m.label || m.key}
+            </option>
+          ))}
+        </SelectEl>
         <Input
           type="number"
           value={draftDays}
           onChange={(e) => {
             setDraftDays(e.target.value);
-            const n = Math.max(1, Number(e.target.value) || windowDays);
-            onWindowDaysChange(n);
+            onWindowDaysChange(Math.max(1, Number(e.target.value) || windowDays));
           }}
-          className="h-9 w-20 text-[13px]"
+          className="h-8 w-20 text-[12px]"
         />
-        <span className="text-xs text-muted-foreground">days</span>
+        <span className="text-[12px] text-muted-foreground">days</span>
       </div>
 
       {metrics.cardsShown === 0 ? (
@@ -74,67 +109,65 @@ export function MetricsTab({
         />
       ) : (
         <>
-          <Stagger className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
-            <StaggerItem>
-              <StatCard label="Cards shown" value={metrics.cardsShown} hint={`last ${metrics.windowDays} days`} />
-            </StaggerItem>
-            <StaggerItem>
-              <StatCard
-                icon={CheckCircle2}
-                label="Useful or acted on"
-                value={metrics.usefulOrActedOnRate != null ? formatPercent(metrics.usefulOrActedOnRate * 100, 0) : "—"}
-                tone="success"
-              />
-            </StaggerItem>
-            <StaggerItem>
-              <StatCard
-                icon={AlertCircle}
-                label="Dismissal rate"
-                value={metrics.dismissalRate != null ? formatPercent(metrics.dismissalRate * 100, 0) : "—"}
-                tone="warning"
-              />
-            </StaggerItem>
-            <StaggerItem>
-              <StatCard
-                icon={Sparkles}
-                label="Content created"
-                value={metrics.contentCreatedCount ?? "—"}
-                hint={
-                  metrics.contentCreatedRate != null
-                    ? `${formatPercent(metrics.contentCreatedRate * 100, 0)} of cards`
-                    : undefined
-                }
-                tone="brand"
-              />
-            </StaggerItem>
-          </Stagger>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <KpiCard
+              icon={Sparkles}
+              label="Cards shown"
+              value={metrics.cardsShown}
+              hint={`last ${metrics.windowDays} days`}
+            />
+            <KpiCard
+              icon={CheckCircle2}
+              label="Useful or acted on"
+              value={metrics.usefulOrActedOnRate != null ? `${Math.round(metrics.usefulOrActedOnRate * 100)}%` : "—"}
+            />
+            <KpiCard
+              icon={AlertCircle}
+              label="Dismissal rate"
+              value={metrics.dismissalRate != null ? `${Math.round(metrics.dismissalRate * 100)}%` : "—"}
+            />
+            <KpiCard
+              icon={Sparkles}
+              label="Content created"
+              value={metrics.contentCreatedCount ?? "—"}
+              hint={
+                metrics.contentCreatedRate != null
+                  ? `${Math.round(metrics.contentCreatedRate * 100)}% of cards`
+                  : undefined
+              }
+            />
+          </div>
 
-          {Object.keys(metrics.dismissalReasons).length > 0 ? (
-            <div className="rounded-2xl border bg-card p-4 shadow-card">
-              <p className="mb-2.5 text-[13px] font-semibold text-foreground">Top dismissal reasons</p>
-              <div className="space-y-1.5">
-                {Object.entries(metrics.dismissalReasons).map(([reason, count]) => (
-                  <div key={reason} className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">{reason}</span>
-                    <span className="font-mono font-semibold text-foreground tabular">{count}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          {Object.keys(metrics.dismissalReasons).length > 0 && (
+            <Card>
+              <CardContent className="p-4">
+                <div className="mb-2 text-[12.5px] font-medium text-foreground">Top dismissal reasons</div>
+                <div className="space-y-1.5">
+                  {Object.entries(metrics.dismissalReasons).map(([reason, count]) => (
+                    <div key={reason} className="flex items-center justify-between text-[12px]">
+                      <span className="text-muted-foreground">{reason}</span>
+                      <span className="font-medium text-foreground">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-          {Object.keys(metrics.notAvailable).length > 0 ? (
-            <Callout tone="neutral">
-              <p className="mb-2 text-[13px] font-semibold text-foreground">Not yet available</p>
-              <div className="space-y-1.5">
-                {Object.entries(metrics.notAvailable).map(([key, reason]) => (
-                  <p key={key}>
-                    <span className="font-semibold text-foreground">{key.replace(/_/g, " ")}:</span> {reason}
-                  </p>
-                ))}
-              </div>
-            </Callout>
-          ) : null}
+          {Object.keys(metrics.notAvailable).length > 0 && (
+            <Card className="border-dashed">
+              <CardContent className="p-4">
+                <div className="mb-2 text-[12.5px] font-medium text-foreground">Not yet available</div>
+                <div className="space-y-1.5">
+                  {Object.entries(metrics.notAvailable).map(([key, reason]) => (
+                    <div key={key} className="text-[12px] text-muted-foreground">
+                      <span className="font-medium text-foreground">{key.replace(/_/g, " ")}:</span> {reason}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
     </div>
