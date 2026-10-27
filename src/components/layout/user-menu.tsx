@@ -2,6 +2,7 @@
 
 import { LogOut, Settings, ShieldCheck, UserRound } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   DropdownMenu,
@@ -15,6 +16,14 @@ import {
 import { currentOperator } from "@/config/site";
 
 export function UserMenu() {
+  const router = useRouter();
+
+  async function signOut() {
+    await fetch("/api/auth/session", { method: "DELETE" });
+    router.push("/login");
+    router.refresh();
+  }
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger
@@ -30,13 +39,17 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <UserRound />
-            Profile
+          <DropdownMenuItem asChild>
+            <Link href="/profile">
+              <UserRound />
+              Profile
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <ShieldCheck />
-            Security & devices
+          <DropdownMenuItem asChild>
+            <Link href="/profile#security">
+              <ShieldCheck />
+              Security & devices
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings">
@@ -46,11 +59,9 @@ export function UserMenu() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild variant="destructive">
-          <Link href="/login">
-            <LogOut />
-            Sign out
-          </Link>
+        <DropdownMenuItem variant="destructive" onSelect={() => void signOut()}>
+          <LogOut />
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

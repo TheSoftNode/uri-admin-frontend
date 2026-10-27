@@ -18,4 +18,6 @@ export const cacheTags = {
   inbox: "inbox",
   auditLog: "audit-log",
   settings: "settings",
+  profile: "profile",
+  notifications: "notifications",
 } as const;

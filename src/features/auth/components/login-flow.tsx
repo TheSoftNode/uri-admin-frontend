@@ -37,10 +37,20 @@ export function LoginFlow() {
   }
 
   async function handleVerify() {
-    // TODO(auth): POST /auth/admin/totp → sets the session cookie.
-    await new Promise((resolve) => setTimeout(resolve, 450));
+    // TODO(auth): swap for POST /auth/admin/totp once the backend exists —
+    // it should return whatever session token replaces the bare email below.
+    const response = await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: lastEmail }),
+    });
+    if (!response.ok) {
+      toast.error("Couldn't start a session. Try again.");
+      return;
+    }
     toast.success("Signed in", { description: "Welcome back." });
     router.push("/overview");
+    router.refresh();
   }
 
   return (
