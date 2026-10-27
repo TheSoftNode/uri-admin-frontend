@@ -19,7 +19,10 @@ function ReviewRow({
   onMarkGolden,
 }: {
   r: PendingReview;
-  onResolved: (r: PendingReview, patch: { onTopic?: boolean; intent?: string; note?: string }) => void;
+  onResolved: (
+    r: PendingReview,
+    patch: { onTopic?: boolean; intent?: string; note?: string },
+  ) => void;
   onMarkGolden: (r: PendingReview) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -63,7 +66,9 @@ function ReviewRow({
             {open ? "Close" : "Resolve"}
           </button>
         </div>
-        {r.text && <p className="text-[13px] leading-relaxed text-foreground/90">&quot;{r.text}&quot;</p>}
+        {r.text && (
+          <p className="text-[13px] leading-relaxed text-foreground/90">&quot;{r.text}&quot;</p>
+        )}
         {r.url && (
           <a href={r.url} target="_blank" rel="noreferrer" className="text-[11.5px] text-primary">
             View source
@@ -73,10 +78,16 @@ function ReviewRow({
           <div className="space-y-2.5 rounded-lg border border-border bg-muted/20 p-3">
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-1.5 text-[12px] text-foreground">
-                <input type="radio" checked={onTopic === true} onChange={() => setOnTopic(true)} /> On-topic
+                <input type="radio" checked={onTopic === true} onChange={() => setOnTopic(true)} />{" "}
+                On-topic
               </label>
               <label className="flex items-center gap-1.5 text-[12px] text-foreground">
-                <input type="radio" checked={onTopic === false} onChange={() => setOnTopic(false)} /> Off-topic
+                <input
+                  type="radio"
+                  checked={onTopic === false}
+                  onChange={() => setOnTopic(false)}
+                />{" "}
+                Off-topic
               </label>
               <Input
                 value={intent}
@@ -109,7 +120,10 @@ function ReviewRow({
 
 interface ReviewsTabProps {
   reviews: PendingReview[];
-  onResolve: (review: PendingReview, patch: { onTopic?: boolean; intent?: string; note?: string }) => void;
+  onResolve: (
+    review: PendingReview,
+    patch: { onTopic?: boolean; intent?: string; note?: string },
+  ) => void;
   onMarkGolden: (review: PendingReview) => void;
 }
 

@@ -4,6 +4,7 @@ import { BookOpen, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -75,7 +76,9 @@ function OntologyCategoryCard({
         </div>
         {Object.entries(category.localTerms).map(([lang, terms]) => (
           <div key={lang} className="space-y-1">
-            <div className="text-[11px] font-medium text-muted-foreground">Local terms ({lang})</div>
+            <div className="text-[11px] font-medium text-muted-foreground">
+              Local terms ({lang})
+            </div>
             <div className="flex flex-wrap gap-1.5">
               {terms.map((t) => (
                 <span
@@ -151,16 +154,17 @@ export function OntologyTab({ categories, onAddTerm, onRemoveTerm }: OntologyTab
         onChange={(e) => setQuery(e.target.value)}
         className="h-8 max-w-xs text-[13px]"
       />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <Stagger className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {filtered.map((c) => (
-          <OntologyCategoryCard
-            key={c.id}
-            category={c}
-            onAddTerm={(term, lang) => onAddTerm(c.id, term, lang)}
-            onRemoveTerm={(term, lang) => onRemoveTerm(c.id, term, lang)}
-          />
+          <StaggerItem key={c.id}>
+            <OntologyCategoryCard
+              category={c}
+              onAddTerm={(term, lang) => onAddTerm(c.id, term, lang)}
+              onRemoveTerm={(term, lang) => onRemoveTerm(c.id, term, lang)}
+            />
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </div>
   );
 }

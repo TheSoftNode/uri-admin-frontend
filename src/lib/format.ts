@@ -58,7 +58,11 @@ export function formatDateTime(iso: string | null | undefined): string {
   const normalized = iso.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(iso) ? iso : `${iso}Z`;
   const date = new Date(normalized);
   if (Number.isNaN(date.getTime())) return "—";
-  const datePart = date.toLocaleDateString(LOCALE, { month: "short", day: "numeric", year: "numeric" });
+  const datePart = date.toLocaleDateString(LOCALE, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
   const timePart = date.toLocaleTimeString(LOCALE, { hour: "numeric", minute: "2-digit" });
   return `${datePart} · ${timePart}`;
 }

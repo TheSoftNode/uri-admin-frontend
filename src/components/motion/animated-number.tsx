@@ -6,11 +6,12 @@ import { useEffect, useRef } from "react";
 import { formatCompactCurrency, formatCurrency, formatNumber } from "@/lib/format";
 import { duration, ease } from "@/lib/motion";
 
-type NumberFormat = "integer" | "decimal" | "usd" | "ngn" | "ngn-compact";
+type NumberFormat = "integer" | "decimal" | "percent" | "usd" | "ngn" | "ngn-compact";
 
 const formatters: Record<NumberFormat, (n: number) => string> = {
   integer: (n) => formatNumber(Math.round(n)),
   decimal: (n) => n.toFixed(2),
+  percent: (n) => `${Math.round(n)}%`,
   usd: (n) => formatCurrency(n, "USD"),
   ngn: (n) => formatCurrency(n, "NGN"),
   "ngn-compact": (n) => formatCompactCurrency(n, "NGN"),

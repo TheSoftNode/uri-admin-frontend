@@ -6,11 +6,24 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { EmptyState } from "@/features/listening/components/empty-state";
-import type { CurationMarket, CurationTopic, TopicHistoryEntry, TopicStatus } from "@/features/listening/types";
+import type {
+  CurationMarket,
+  CurationTopic,
+  TopicHistoryEntry,
+  TopicStatus,
+} from "@/features/listening/types";
 import { topicStatusMeta } from "@/features/listening/types";
 import { formatDateTime } from "@/lib/format";
+import { toneSoftBg, toneText } from "@/lib/tone";
 import { cn } from "@/lib/utils";
 
 function topRelated(coOccurs: Record<string, number> | undefined, n = 3): string[] {
@@ -36,7 +49,10 @@ const SelectEl = ({
   <select
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    className={cn("h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground", className)}
+    className={cn(
+      "h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground",
+      className,
+    )}
   >
     {children}
   </select>
@@ -44,14 +60,17 @@ const SelectEl = ({
 
 function TopicHistoryPanel({ entries }: { entries: TopicHistoryEntry[] | undefined }) {
   if (!entries || entries.length === 0) {
-    return <div className="py-2 text-[11.5px] text-muted-foreground">No recorded transitions yet.</div>;
+    return (
+      <div className="py-2 text-[11.5px] text-muted-foreground">No recorded transitions yet.</div>
+    );
   }
   return (
     <ol className="space-y-1.5 py-1">
       {entries.map((e, i) => (
         <li key={i} className="text-[11.5px] text-muted-foreground">
           <span className="font-medium text-foreground">
-            {e.oldStatus ? topicStatusMeta[e.oldStatus].label : "new"} → {topicStatusMeta[e.newStatus].label}
+            {e.oldStatus ? topicStatusMeta[e.oldStatus].label : "new"} →{" "}
+            {topicStatusMeta[e.newStatus].label}
           </span>{" "}
           by {e.actor} · {formatDateTime(e.at)}
           {e.reason ? <span className="italic"> — {e.reason}</span> : null}
@@ -155,27 +174,42 @@ export function TopicsTab({ markets, topics, topicHistory, market, onDecide }: T
                         <TableCell>
                           <span
                             className={cn(
-                              "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold",
-                              meta.className,
+                              "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                              toneSoftBg[meta.tone],
+                              toneText[meta.tone],
                             )}
                           >
                             {meta.label}
                           </span>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{formatDateTime(t.lastSeen)}</TableCell>
-                        <TableCell className="text-muted-foreground">{t.decidedBy || "—"}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDateTime(t.lastSeen)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {t.decidedBy || "—"}
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1.5">
                             <Button size="xs" variant="ghost" onClick={() => toggleHistory(id)}>
                               <History className="h-3 w-3" />
                             </Button>
                             {t.status !== "monitored" && (
-                              <Button size="xs" variant="outline" disabled={busy} onClick={() => decide(t, "monitored")}>
+                              <Button
+                                size="xs"
+                                variant="outline"
+                                disabled={busy}
+                                onClick={() => decide(t, "monitored")}
+                              >
                                 Promote
                               </Button>
                             )}
                             {t.status !== "retired" && (
-                              <Button size="xs" variant="ghost" disabled={busy} onClick={() => decide(t, "retired")}>
+                              <Button
+                                size="xs"
+                                variant="ghost"
+                                disabled={busy}
+                                onClick={() => decide(t, "retired")}
+                              >
                                 Retire
                               </Button>
                             )}
@@ -210,7 +244,9 @@ export function TopicsTab({ markets, topics, topicHistory, market, onDecide }: T
                   <div className="space-y-2 p-3.5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="truncate text-[13.5px] font-medium text-foreground">{t.name || t.key}</div>
+                        <div className="truncate text-[13.5px] font-medium text-foreground">
+                          {t.name || t.key}
+                        </div>
                         <div className="truncate text-[11.5px] text-muted-foreground">
                           {markets.find((m) => m.key === t.market)?.label || t.market}
                         </div>
@@ -222,8 +258,9 @@ export function TopicsTab({ markets, topics, topicHistory, market, onDecide }: T
                       </div>
                       <span
                         className={cn(
-                          "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
-                          meta.className,
+                          "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                          toneSoftBg[meta.tone],
+                          toneText[meta.tone],
                         )}
                       >
                         {meta.label}
@@ -235,16 +272,31 @@ export function TopicsTab({ markets, topics, topicHistory, market, onDecide }: T
                     </div>
                     <div className="flex gap-1.5">
                       {t.status !== "monitored" && (
-                        <Button size="xs" variant="outline" disabled={busy} onClick={() => decide(t, "monitored")}>
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          disabled={busy}
+                          onClick={() => decide(t, "monitored")}
+                        >
                           Promote
                         </Button>
                       )}
                       {t.status !== "retired" && (
-                        <Button size="xs" variant="ghost" disabled={busy} onClick={() => decide(t, "retired")}>
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          disabled={busy}
+                          onClick={() => decide(t, "retired")}
+                        >
                           Retire
                         </Button>
                       )}
-                      <Button size="xs" variant="ghost" className="ml-auto" onClick={() => toggleHistory(id)}>
+                      <Button
+                        size="xs"
+                        variant="ghost"
+                        className="ml-auto"
+                        onClick={() => toggleHistory(id)}
+                      >
                         <History className="h-3 w-3" /> History
                       </Button>
                     </div>

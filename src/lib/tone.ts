@@ -29,3 +29,13 @@ export const toneBg: Record<Tone, string> = {
   warning: "bg-warning",
   critical: "bg-critical",
 };
+
+/** Tailwind background class for a tone (soft/tinted — icon chips, pills). */
+export const toneSoftBg: Record<Tone, string> = {
+  neutral: "bg-muted",
+  brand: "bg-brand-soft",
+  info: "bg-info-soft",
+  success: "bg-success-soft",
+  warning: "bg-warning-soft",
+  critical: "bg-critical-soft",
+};

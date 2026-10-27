@@ -89,7 +89,12 @@ const topics: CurationTopic[] = [
 
 const topicHistory: Record<string, TopicHistoryEntry[]> = {
   "ng-fitness:home_workout": [
-    { oldStatus: "candidate", newStatus: "monitored", actor: "Ada Okafor", at: "2026-10-18T10:00:00Z" },
+    {
+      oldStatus: "candidate",
+      newStatus: "monitored",
+      actor: "Ada Okafor",
+      at: "2026-10-18T10:00:00Z",
+    },
     { oldStatus: "observed", newStatus: "candidate", actor: "system", at: "2026-10-10T06:00:00Z" },
   ],
   "ng-logistics:late_delivery": [
@@ -102,8 +107,19 @@ const topicHistory: Record<string, TopicHistoryEntry[]> = {
     },
   ],
   "ke-beauty:scalp_oils": [
-    { oldStatus: "monitored", newStatus: "paused", actor: "Ada Okafor", at: "2026-10-20T08:00:00Z", reason: "Volume dropped off" },
-    { oldStatus: "candidate", newStatus: "monitored", actor: "Ada Okafor", at: "2026-09-15T08:00:00Z" },
+    {
+      oldStatus: "monitored",
+      newStatus: "paused",
+      actor: "Ada Okafor",
+      at: "2026-10-20T08:00:00Z",
+      reason: "Volume dropped off",
+    },
+    {
+      oldStatus: "candidate",
+      newStatus: "monitored",
+      actor: "Ada Okafor",
+      at: "2026-09-15T08:00:00Z",
+    },
   ],
   "ng-beauty:fragrance_free": [
     { oldStatus: "paused", newStatus: "retired", actor: "Chidi Eze", at: "2026-09-30T12:00:00Z" },
@@ -272,8 +288,10 @@ const metrics: ProductMetrics = {
     "wrong format suggested": 22,
   },
   notAvailable: {
-    first_draft_approval_rate: "No draft-approval tracking exists yet — card → draft lifecycle isn't linked to approval state.",
-    ad_test_cost_per_qualified_lead: "No ad-test outcome tracking exists yet — depends on the ad_test action being wired to Jane Ads.",
+    first_draft_approval_rate:
+      "No draft-approval tracking exists yet — card → draft lifecycle isn't linked to approval state.",
+    ad_test_cost_per_qualified_lead:
+      "No ad-test outcome tracking exists yet — depends on the ad_test action being wired to Jane Ads.",
   },
 };
 

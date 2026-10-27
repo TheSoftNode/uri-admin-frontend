@@ -1,6 +1,17 @@
 "use client";
 
-import { BookOpen, FlaskConical, Gauge, Globe2, Inbox, Settings2, ShieldCheck, Star, Tags } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  BookOpen,
+  FlaskConical,
+  Gauge,
+  Globe2,
+  Inbox,
+  Settings2,
+  ShieldCheck,
+  Star,
+  Tags,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -23,6 +34,7 @@ import type {
   SourcePermission,
   TopicStatus,
 } from "@/features/listening/types";
+import { duration, ease, spring } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 const TABS: { id: ListeningTabId; label: string; icon: LucideIcon }[] = [
@@ -50,7 +62,10 @@ const SelectEl = ({
   <select
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    className={cn("h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground", className)}
+    className={cn(
+      "h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground",
+      className,
+    )}
   >
     {children}
   </select>
@@ -80,7 +95,9 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
   const decideTopic = (topic: CurationTopic, status: TopicStatus) => {
     setTopics((prev) =>
       prev.map((t) =>
-        t.market === topic.market && t.key === topic.key ? { ...t, status, decidedBy: "Ada Okafor" } : t,
+        t.market === topic.market && t.key === topic.key
+          ? { ...t, status, decidedBy: "Ada Okafor" }
+          : t,
       ),
     );
   };
@@ -112,7 +129,10 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
         if (c.id !== categoryId) return c;
         if (!lang) return { ...c, coreTerms: c.coreTerms.filter((x) => x !== term) };
         const existing = c.localTerms[lang] ?? [];
-        return { ...c, localTerms: { ...c.localTerms, [lang]: existing.filter((x) => x !== term) } };
+        return {
+          ...c,
+          localTerms: { ...c.localTerms, [lang]: existing.filter((x) => x !== term) },
+        };
       }),
     );
   };
@@ -140,7 +160,11 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
 
   const saveConfig = (next: ListeningConfig) => setConfig(next);
 
-  const runReplay = (input: { market: string; at: string[]; overrides: Record<string, unknown> }) => {
+  const runReplay = (input: {
+    market: string;
+    at: string[];
+    overrides: Record<string, unknown>;
+  }) => {
     setReplayResults([
       {
         market: input.market,
@@ -161,8 +185,8 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
     <div>
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
         <p className="max-w-2xl text-[13.5px] text-muted-foreground">
-          Topics, sources, review queue, golden datasets, offline replay and product metrics for the Listening
-          Intelligence Platform — shared across every subscribed business, admin-only.
+          Topics, sources, review queue, golden datasets, offline replay and product metrics for the
+          Listening Intelligence Platform — shared across every subscribed business, admin-only.
         </p>
         <div className="flex items-center gap-2">
           <Globe2 className="h-4 w-4 text-muted-foreground" />
@@ -186,50 +210,79 @@ export function ListeningConsole({ data }: { data: ListeningPageData }) {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex items-center gap-1.5 border-b-2 px-3.5 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors",
-                isActive ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground",
+                "relative flex items-center gap-1.5 px-3.5 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors",
+                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Icon className="h-3.5 w-3.5" />
               {tab.label}
+              {isActive ? (
+                <motion.div
+                  layoutId="listening-tab-indicator"
+                  className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-primary"
+                  transition={spring}
+                />
+              ) : null}
             </button>
           );
         })}
       </div>
 
-      <div className="mt-5">
-        {activeTab === "topics" && (
-          <TopicsTab
-            markets={data.markets}
-            topics={topics}
-            topicHistory={data.topicHistory}
-            market={market}
-            onDecide={decideTopic}
-          />
-        )}
-        {activeTab === "sources" && <SourcesTab sources={sources} onToggle={toggleSource} />}
-        {activeTab === "ontology" && (
-          <OntologyTab categories={ontology} onAddTerm={addOntologyTerm} onRemoveTerm={removeOntologyTerm} />
-        )}
-        {activeTab === "settings" && <SettingsTab config={config} onSave={saveConfig} />}
-        {activeTab === "reviews" && (
-          <ReviewsTab reviews={reviewsForMarket} onResolve={resolveReview} onMarkGolden={markGolden} />
-        )}
-        {activeTab === "golden" && <GoldenTab items={goldenForMarket} onRemove={removeGolden} />}
-        {activeTab === "replay" && (
-          <ReplayTab markets={data.markets} market={market} results={replayResults} onRun={runReplay} />
-        )}
-        {activeTab === "metrics" && (
-          <MetricsTab
-            markets={data.markets}
-            market={market}
-            onMarketChange={setMarket}
-            windowDays={windowDays}
-            onWindowDaysChange={setWindowDays}
-            metrics={metrics}
-          />
-        )}
-      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: duration.fast, ease: ease.out }}
+          className="mt-5"
+        >
+          {activeTab === "topics" && (
+            <TopicsTab
+              markets={data.markets}
+              topics={topics}
+              topicHistory={data.topicHistory}
+              market={market}
+              onDecide={decideTopic}
+            />
+          )}
+          {activeTab === "sources" && <SourcesTab sources={sources} onToggle={toggleSource} />}
+          {activeTab === "ontology" && (
+            <OntologyTab
+              categories={ontology}
+              onAddTerm={addOntologyTerm}
+              onRemoveTerm={removeOntologyTerm}
+            />
+          )}
+          {activeTab === "settings" && <SettingsTab config={config} onSave={saveConfig} />}
+          {activeTab === "reviews" && (
+            <ReviewsTab
+              reviews={reviewsForMarket}
+              onResolve={resolveReview}
+              onMarkGolden={markGolden}
+            />
+          )}
+          {activeTab === "golden" && <GoldenTab items={goldenForMarket} onRemove={removeGolden} />}
+          {activeTab === "replay" && (
+            <ReplayTab
+              markets={data.markets}
+              market={market}
+              results={replayResults}
+              onRun={runReplay}
+            />
+          )}
+          {activeTab === "metrics" && (
+            <MetricsTab
+              markets={data.markets}
+              market={market}
+              onMarketChange={setMarket}
+              windowDays={windowDays}
+              onWindowDaysChange={setWindowDays}
+              metrics={metrics}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

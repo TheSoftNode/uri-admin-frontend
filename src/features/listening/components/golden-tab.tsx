@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,36 +38,43 @@ export function GoldenTab({ items, onRemove }: GoldenTabProps) {
   };
 
   return (
-    <div className="space-y-3">
+    <Stagger className="space-y-3">
       {items.map((g) => (
-        <Card key={`${g.market}:${g.sourceId}`}>
-          <CardContent className="flex items-start justify-between gap-3 p-4">
-            <div className="min-w-0 space-y-1">
-              <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                <Badge variant="outline" className="text-[10px]">
-                  {g.market}
-                </Badge>
-                <span>{g.intent || "no intent"}</span>
-                <span>·</span>
-                <span>on-topic: {g.onTopic ? "yes" : "no"}</span>
-                {g.sentiment && (
-                  <>
-                    <span>·</span>
-                    <span>{g.sentiment}</span>
-                  </>
-                )}
+        <StaggerItem key={`${g.market}:${g.sourceId}`}>
+          <Card>
+            <CardContent className="flex items-start justify-between gap-3 p-4">
+              <div className="min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                  <Badge variant="outline" className="text-[10px]">
+                    {g.market}
+                  </Badge>
+                  <span>{g.intent || "no intent"}</span>
+                  <span>·</span>
+                  <span>on-topic: {g.onTopic ? "yes" : "no"}</span>
+                  {g.sentiment && (
+                    <>
+                      <span>·</span>
+                      <span>{g.sentiment}</span>
+                    </>
+                  )}
+                </div>
+                {g.text && <p className="text-[13px] text-foreground/90">&quot;{g.text}&quot;</p>}
+                <div className="text-[11px] text-muted-foreground">
+                  Marked by {g.markedBy || "—"} · {formatDateTime(g.markedAt)}
+                </div>
               </div>
-              {g.text && <p className="text-[13px] text-foreground/90">&quot;{g.text}&quot;</p>}
-              <div className="text-[11px] text-muted-foreground">
-                Marked by {g.markedBy || "—"} · {formatDateTime(g.markedAt)}
-              </div>
-            </div>
-            <Button size="xs" variant="ghost" disabled={busyId === g.sourceId} onClick={() => unmark(g)}>
-              Remove
-            </Button>
-          </CardContent>
-        </Card>
+              <Button
+                size="xs"
+                variant="ghost"
+                disabled={busyId === g.sourceId}
+                onClick={() => unmark(g)}
+              >
+                Remove
+              </Button>
+            </CardContent>
+          </Card>
+        </StaggerItem>
       ))}
-    </div>
+    </Stagger>
   );
 }

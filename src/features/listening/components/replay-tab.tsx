@@ -25,7 +25,10 @@ const SelectEl = ({
   <select
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    className={cn("h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground", className)}
+    className={cn(
+      "h-8 rounded-lg border border-border bg-background px-2 text-[12px] text-foreground",
+      className,
+    )}
   >
     {children}
   </select>
@@ -82,8 +85,8 @@ export function ReplayTab({ markets, market, results, onRun }: ReplayTabProps) {
             Run a candidate detection config against stored history
           </div>
           <p className="text-[12px] text-muted-foreground">
-            Nothing here is persisted — compares what a candidate config (e.g. different thresholds) would have
-            produced against what the live config actually stored, before a change ships.
+            Nothing here is persisted — compares what a candidate config (e.g. different thresholds)
+            would have produced against what the live config actually stored, before a change ships.
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
@@ -109,7 +112,9 @@ export function ReplayTab({ markets, market, results, onRun }: ReplayTabProps) {
             </div>
           </div>
           <div>
-            <div className="mb-1 text-[11px] font-medium text-muted-foreground">Candidate config overrides (JSON)</div>
+            <div className="mb-1 text-[11px] font-medium text-muted-foreground">
+              Candidate config overrides (JSON)
+            </div>
             <Textarea
               value={overridesText}
               onChange={(e) => setOverridesText(e.target.value)}
@@ -138,13 +143,19 @@ export function ReplayTab({ markets, market, results, onRun }: ReplayTabProps) {
                 <CardContent className="space-y-2 p-4">
                   <div className="flex flex-wrap items-center gap-3 text-[12.5px]">
                     <span className="font-medium text-foreground">{r.day}</span>
-                    <span className="text-muted-foreground">candidate: {r.candidateSignalCount} signals</span>
-                    <span className="text-muted-foreground">compared: {r.comparedSignalCount} signals</span>
+                    <span className="text-muted-foreground">
+                      candidate: {r.candidateSignalCount} signals
+                    </span>
+                    <span className="text-muted-foreground">
+                      compared: {r.comparedSignalCount} signals
+                    </span>
                     <span className="text-muted-foreground">agreement: {r.agreementCount}</span>
                   </div>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
-                      <div className="text-[11px] font-semibold text-emerald-700">New signals (candidate only)</div>
+                      <div className="text-[11px] font-semibold text-emerald-700">
+                        New signals (candidate only)
+                      </div>
                       {r.newSignals.length === 0 ? (
                         <div className="text-[11.5px] text-muted-foreground">None</div>
                       ) : (
@@ -158,7 +169,9 @@ export function ReplayTab({ markets, market, results, onRun }: ReplayTabProps) {
                       )}
                     </div>
                     <div>
-                      <div className="text-[11px] font-semibold text-rose-700">Missed signals (compared only)</div>
+                      <div className="text-[11px] font-semibold text-rose-700">
+                        Missed signals (compared only)
+                      </div>
                       {r.missedSignals.length === 0 ? (
                         <div className="text-[11.5px] text-muted-foreground">None</div>
                       ) : (

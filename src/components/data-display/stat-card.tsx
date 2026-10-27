@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { toneText } from "@/lib/tone";
+import { toneSoftBg, toneText } from "@/lib/tone";
 import { cn } from "@/lib/utils";
 import type { Tone } from "@/types/tone";
 
@@ -15,7 +15,14 @@ interface StatCardProps {
   className?: string;
 }
 
-export function StatCard({ label, value, hint, tone = "neutral", icon: Icon, className }: StatCardProps) {
+export function StatCard({
+  label,
+  value,
+  hint,
+  tone = "neutral",
+  icon: Icon,
+  className,
+}: StatCardProps) {
   return (
     <div
       className={cn(
@@ -27,7 +34,8 @@ export function StatCard({ label, value, hint, tone = "neutral", icon: Icon, cla
         {Icon ? (
           <span
             className={cn(
-              "flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft",
+              "flex size-8 shrink-0 items-center justify-center rounded-lg",
+              toneSoftBg[tone],
               toneText[tone],
             )}
           >
